@@ -61,7 +61,6 @@ func getNote(w http.ResponseWriter, r *http.Request) {
 
 //Create a new note
 func createNote(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	var note Note
 	_ = json.NewDecoder(r.Body).Decode(&note)
 	//Connect to postgres db
@@ -88,15 +87,27 @@ func createNote(w http.ResponseWriter, r *http.Request) {
 
 //Delete a note
 func deleteNote(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	for index, item := range notes {
-		if item.NoteID == params["id"] {
-			notes = append(notes[:index], notes[index+1:]...)
-			break
-		}
+	//Connect to postgres db
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
 	}
-	json.NewEncoder(w).Encode(notes)
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	sql := `DELETE FROM "note" WHERE note_id = $1 AND author_id = $2`
+	_, err = db.Exec(sql, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
+	if err != nil {
+		panic(err)
+	}
 }
 
 //Update a note
