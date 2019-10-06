@@ -5,9 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -160,21 +158,7 @@ func deleteNote(w http.ResponseWriter, r *http.Request) {
 
 //Update a note
 func updateNote(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	// for index, item := range notes {
-	// 	if item.NoteID == params["id"] {
-	// 		notes = append(notes[:index], notes[index+1:]...)
-	// 		var note Note
-	// 		_ = json.NewDecoder(r.Body).Decode(&note)
-	// 		note.NoteID = params["id"]
-	// 		notes = append(notes, note)
-	// 		json.NewEncoder(w).Encode(note)
-	// 		return
-	// 	}
-	// }
-	//json.NewEncoder(w).Encode(notes)
-	//Connect to postgres db
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -191,60 +175,102 @@ func updateNote(w http.ResponseWriter, r *http.Request) {
 	}
 	var note Note
 	_ = json.NewDecoder(r.Body).Decode(&note)
-	sqlStatement := `UPDATE "note" SET note_text = $1 WHERE note_id = $2 AND author_id = $2`
-	_, err = db.Exec(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
+	sqlStatement := `UPDATE "note" SET note_text = $1 FROM permissions WHERE note.note_id = $2 AND (author_id = $3 OR (permissions.user_id = $3 AND permissions.write_permission = true))`
+	_, err = db.Exec(sqlStatement, note.NoteText, params["id"], 2) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
 	}
 }
 
 //Get ALL users
-var users []User
-
 func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	//Connect to postgres db
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	sqlStatement := `SELECT * FROM "user"`
+	rows, err := db.Query(sqlStatement)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	var users []User
+	for rows.Next() {
+		var user User
+		err = rows.Scan(&user.UserID, &user.FirstName, &user.LastName)
+		if err != nil {
+			panic(err)
+		}
+		users = append(users, user)
+	}
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
 	json.NewEncoder(w).Encode(users)
 }
 
 //Create a new user
 func createUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var user User
-	_ = json.NewDecoder(r.Body).Decode(&user)
-	user.UserID = strconv.Itoa(rand.Intn(1000000)) //Mock ID - not safe
-	users = append(users, user)
-	json.NewEncoder(w).Encode(user)
-}
+	var newUser User
+	_ = json.NewDecoder(r.Body).Decode(&newUser)
+	//Connect to postgres db
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
 
-//Delete a user
-func deleteUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	for index, user := range users {
-		if user.UserID == params["id"] {
-			users = append(users[:index], users[index+1:]...)
-			break
-		}
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
 	}
-	json.NewEncoder(w).Encode(users)
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	sqlStatement := `INSERT INTO "user" (user_first_name, user_last_name) VALUES ($1, $2)`
+	_, err = db.Exec(sqlStatement, newUser.FirstName, newUser.LastName)
+	if err != nil {
+		panic(err)
+	}
 }
 
 //Update a user
 func updateUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	for index, user := range users {
-		if user.UserID == params["id"] {
-			users = append(users[:index], users[index+1:]...)
-			var user User
-			_ = json.NewDecoder(r.Body).Decode(&user)
-			user.UserID = params["id"]
-			users = append(users, user)
-			json.NewEncoder(w).Encode(user)
-			return
-		}
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
 	}
-	json.NewEncoder(w).Encode(users)
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	var user User
+	_ = json.NewDecoder(r.Body).Decode(&user)
+	sqlStatement := `UPDATE "user" SET user_first_name = $1, user_last_name = $2 WHERE user_id = $3`
+	_, err = db.Exec(sqlStatement, user.FirstName, user.LastName, 1) //@todo get author_id from cookie (currently logged on user)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
@@ -259,7 +285,6 @@ func main() {
 	r.HandleFunc("/api/notes/{id}", deleteNote).Methods("DELETE")
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
-	r.HandleFunc("/api/users/{id}", updateUser).Methods("PUT")
-	r.HandleFunc("/api/users/{id}", deleteUser).Methods("DELETE")
+	r.HandleFunc("/api/users", updateUser).Methods("PUT")
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
