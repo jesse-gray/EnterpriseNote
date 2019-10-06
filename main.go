@@ -1,13 +1,24 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
+)
+
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "password"
+	dbname   = "enterprisedb"
 )
 
 //Note Struct (Model)
@@ -151,6 +162,24 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	//Connect to postgres db
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Successfully connected!")
+
 	//Initialise Router
 	r := mux.NewRouter()
 
@@ -173,5 +202,4 @@ func main() {
 	r.HandleFunc("/api/users/{id}", updateUser).Methods("PUT")
 	r.HandleFunc("/api/users/{id}", deleteUser).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":8000", r))
-
 }
