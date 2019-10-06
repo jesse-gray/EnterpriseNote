@@ -53,7 +53,7 @@ func getNotes(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	sqlStatement := `SELECT * FROM "note" WHERE author_id = $1`
+	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id WHERE author_id = $1 OR (permissions.user_id = $1 AND permissions.read_permission = true)`
 	rows, err := db.Query(sqlStatement, 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
@@ -94,7 +94,7 @@ func getNote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	sqlStatement := `SELECT * FROM "note" WHERE note_id = $1 AND author_id = $2`
+	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id WHERE note.note_id = $1 AND (author_id = $2 OR (permissions.user_id = $2 AND permissions.read_permission = true))`
 	var note Note
 	row := db.QueryRow(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
 	switch err := row.Scan(&note.NoteID, &note.NoteText, &note.AuthorID); err {
@@ -160,8 +160,8 @@ func deleteNote(w http.ResponseWriter, r *http.Request) {
 
 //Update a note
 func updateNote(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Content-Type", "application/json")
-	// params := mux.Vars(r)
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
 	// for index, item := range notes {
 	// 	if item.NoteID == params["id"] {
 	// 		notes = append(notes[:index], notes[index+1:]...)
@@ -173,7 +173,29 @@ func updateNote(w http.ResponseWriter, r *http.Request) {
 	// 		return
 	// 	}
 	// }
-	// json.NewEncoder(w).Encode(notes)
+	//json.NewEncoder(w).Encode(notes)
+	//Connect to postgres db
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	var note Note
+	_ = json.NewDecoder(r.Body).Decode(&note)
+	sqlStatement := `UPDATE "note" SET note_text = $1 WHERE note_id = $2 AND author_id = $2`
+	_, err = db.Exec(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
+	if err != nil {
+		panic(err)
+	}
 }
 
 //Get ALL users
