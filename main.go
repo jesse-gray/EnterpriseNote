@@ -64,9 +64,26 @@ func createNote(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var note Note
 	_ = json.NewDecoder(r.Body).Decode(&note)
-	note.NoteID = strconv.Itoa(rand.Intn(1000000)) //Mock ID - not safe
-	notes = append(notes, note)
-	json.NewEncoder(w).Encode(note)
+	//Connect to postgres db
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	sql := `INSERT INTO "note" (note_text, author_id) VALUES ($1, $2)`
+	_, err = db.Exec(sql, note.NoteText, 1) //@todo get author_id from cookie (currently logged on user)
+	if err != nil {
+		panic(err)
+	}
 }
 
 //Delete a note
@@ -104,20 +121,6 @@ func updateNote(w http.ResponseWriter, r *http.Request) {
 func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
-}
-
-//Get single user
-func getUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	//Loop through users for the right id
-	for _, user := range users {
-		if user.UserID == params["id"] {
-			json.NewEncoder(w).Encode(user)
-			return
-		}
-	}
-	json.NewEncoder(w).Encode(&User{})
 }
 
 //Create a new user
@@ -162,24 +165,6 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	//Connect to postgres db
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Successfully connected!")
-
 	//Initialise Router
 	r := mux.NewRouter()
 
@@ -197,7 +182,6 @@ func main() {
 	r.HandleFunc("/api/notes/{id}", updateNote).Methods("PUT")
 	r.HandleFunc("/api/notes/{id}", deleteNote).Methods("DELETE")
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
-	r.HandleFunc("/api/users/{id}", getUser).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
 	r.HandleFunc("/api/users/{id}", updateUser).Methods("PUT")
 	r.HandleFunc("/api/users/{id}", deleteUser).Methods("DELETE")
