@@ -25,7 +25,7 @@ const (
 type Note struct {
 	NoteID   string `json:"noteid"`
 	NoteText string `json:"notetext"`
-	Author   *User  `json:"author"`
+	AuthorID int    `json:"authorid"`
 }
 
 //User Struct
@@ -49,14 +49,40 @@ func getNotes(w http.ResponseWriter, r *http.Request) {
 func getNote(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	//Loop through notes for the right id
-	for _, item := range notes {
-		if item.NoteID == params["id"] {
-			json.NewEncoder(w).Encode(item)
-			return
-		}
+	// //Loop through notes for the right id
+	// for _, item := range notes {
+	// 	if item.NoteID == params["id"] {
+	// 		json.NewEncoder(w).Encode(item)
+	// 		return
+	// 	}
+	// }
+
+	//Connect to postgres db
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
 	}
-	json.NewEncoder(w).Encode(&Note{})
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	sqlStatement := `SELECT note_id, note_text, author_id FROM "note" WHERE note_id = $1 AND author_id = $2`
+	var note Note
+	row := db.QueryRow(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
+	switch err := row.Scan(&note.NoteID, &note.NoteText, &note.AuthorID); err {
+	case sql.ErrNoRows:
+		fmt.Println("No notes were found!")
+	case nil:
+		json.NewEncoder(w).Encode(note)
+	default:
+		panic(err)
+	}
 }
 
 //Create a new note
@@ -78,8 +104,8 @@ func createNote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	sql := `INSERT INTO "note" (note_text, author_id) VALUES ($1, $2)`
-	_, err = db.Exec(sql, note.NoteText, 1) //@todo get author_id from cookie (currently logged on user)
+	sqlStatement := `INSERT INTO "note" (note_text, author_id) VALUES ($1, $2)`
+	_, err = db.Exec(sqlStatement, note.NoteText, 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
 	}
@@ -103,8 +129,8 @@ func deleteNote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	sql := `DELETE FROM "note" WHERE note_id = $1 AND author_id = $2`
-	_, err = db.Exec(sql, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
+	sqlStatement := `DELETE FROM "note" WHERE note_id = $1 AND author_id = $2`
+	_, err = db.Exec(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
 	}
@@ -180,8 +206,8 @@ func main() {
 	r := mux.NewRouter()
 
 	//Mock data - @todo - implement db
-	notes = append(notes, Note{NoteID: "1", NoteText: "This is sample text for the first note", Author: &User{UserID: "1", FirstName: "John", LastName: "Smith"}})
-	notes = append(notes, Note{NoteID: "2", NoteText: "This is some more sample text, however this is for the second note", Author: &User{UserID: "2", FirstName: "Sharon", LastName: "Tomkins"}})
+	notes = append(notes, Note{NoteID: "1", NoteText: "This is sample text for the first note", AuthorID: 1})
+	notes = append(notes, Note{NoteID: "2", NoteText: "This is some more sample text, however this is for the second note", AuthorID: 2})
 
 	users = append(users, User{UserID: "1", FirstName: "John", LastName: "Smith"})
 	users = append(users, User{UserID: "2", FirstName: "Sharon", LastName: "Tomkins"})
