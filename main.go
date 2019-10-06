@@ -35,28 +35,9 @@ type User struct {
 	LastName  string `json:"lastname"`
 }
 
-//Initialise slices
-var notes []Note
-var users []User
-
 //Get ALL notes
 func getNotes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(notes)
-}
-
-//Get single note
-func getNote(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	// //Loop through notes for the right id
-	// for _, item := range notes {
-	// 	if item.NoteID == params["id"] {
-	// 		json.NewEncoder(w).Encode(item)
-	// 		return
-	// 	}
-	// }
-
 	//Connect to postgres db
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
@@ -72,7 +53,48 @@ func getNote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	sqlStatement := `SELECT note_id, note_text, author_id FROM "note" WHERE note_id = $1 AND author_id = $2`
+	sqlStatement := `SELECT * FROM "note" WHERE author_id = $1`
+	rows, err := db.Query(sqlStatement, 1) //@todo get author_id from cookie (currently logged on user)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	var notes []Note
+	for rows.Next() {
+		var note Note
+		err = rows.Scan(&note.NoteID, &note.NoteText, &note.AuthorID)
+		if err != nil {
+			panic(err)
+		}
+		notes = append(notes, note)
+	}
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+	json.NewEncoder(w).Encode(notes)
+}
+
+//Get single note
+func getNote(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	//Connect to postgres db
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	sqlStatement := `SELECT * FROM "note" WHERE note_id = $1 AND author_id = $2`
 	var note Note
 	row := db.QueryRow(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
 	switch err := row.Scan(&note.NoteID, &note.NoteText, &note.AuthorID); err {
@@ -138,23 +160,25 @@ func deleteNote(w http.ResponseWriter, r *http.Request) {
 
 //Update a note
 func updateNote(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	for index, item := range notes {
-		if item.NoteID == params["id"] {
-			notes = append(notes[:index], notes[index+1:]...)
-			var note Note
-			_ = json.NewDecoder(r.Body).Decode(&note)
-			note.NoteID = params["id"]
-			notes = append(notes, note)
-			json.NewEncoder(w).Encode(note)
-			return
-		}
-	}
-	json.NewEncoder(w).Encode(notes)
+	// w.Header().Set("Content-Type", "application/json")
+	// params := mux.Vars(r)
+	// for index, item := range notes {
+	// 	if item.NoteID == params["id"] {
+	// 		notes = append(notes[:index], notes[index+1:]...)
+	// 		var note Note
+	// 		_ = json.NewDecoder(r.Body).Decode(&note)
+	// 		note.NoteID = params["id"]
+	// 		notes = append(notes, note)
+	// 		json.NewEncoder(w).Encode(note)
+	// 		return
+	// 	}
+	// }
+	// json.NewEncoder(w).Encode(notes)
 }
 
 //Get ALL users
+var users []User
+
 func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
@@ -204,13 +228,6 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 func main() {
 	//Initialise Router
 	r := mux.NewRouter()
-
-	//Mock data - @todo - implement db
-	notes = append(notes, Note{NoteID: "1", NoteText: "This is sample text for the first note", AuthorID: 1})
-	notes = append(notes, Note{NoteID: "2", NoteText: "This is some more sample text, however this is for the second note", AuthorID: 2})
-
-	users = append(users, User{UserID: "1", FirstName: "John", LastName: "Smith"})
-	users = append(users, User{UserID: "2", FirstName: "Sharon", LastName: "Tomkins"})
 
 	//Route handlers
 	r.HandleFunc("/api/notes", getNotes).Methods("GET")
