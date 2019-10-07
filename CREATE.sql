@@ -1,3 +1,4 @@
+--Need to have a database "enterprisedb"
 --CREATE tables
 CREATE TABLE "user" (
 	user_id					int					GENERATED ALWAYS AS IDENTITY,
@@ -35,3 +36,6 @@ VALUES 	('John', 'Smith'),
 INSERT INTO note (note_text, author_id)
 VALUES 	('This is sample text for the first note', 1),
 		('This is some more sample text, however this is for the second note', 2);
+		
+INSERT INTO permissions
+VALUES 	(2, 1, true, false);
