@@ -33,6 +33,14 @@ type User struct {
 	LastName  string `json:"lastname"`
 }
 
+//Permission Struct
+type Permission struct {
+	NoteID          int  `json:"noteid"`
+	UserID          int  `json:"userid"`
+	ReadPermission  bool `json:"readpermission"`
+	WritePermission bool `json:"writepermission"`
+}
+
 //Get ALL notes
 func getNotes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -273,6 +281,31 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Update a permission
+func updatePermission(w http.ResponseWriter, r *http.Request) {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	var permission Permission
+	_ = json.NewDecoder(r.Body).Decode(&permission)
+	sqlStatement := `UPDATE permissions SET read_permission = $1, write_permission = $2 FROM permissions AS t1 JOIN note ON t1.note_id = note.note_id WHERE permissions.note_id = $3 AND permissions.user_id = $4 AND note.author_id = $5`
+	_, err = db.Exec(sqlStatement, permission.ReadPermission, permission.WritePermission, permission.NoteID, permission.UserID, 2) //@todo get author_id from cookie (currently logged on user)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func main() {
 	//Initialise Router
 	r := mux.NewRouter()
@@ -286,5 +319,6 @@ func main() {
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
 	r.HandleFunc("/api/users", updateUser).Methods("PUT")
+	r.HandleFunc("/api/permission", updatePermission).Methods("PUT")
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
