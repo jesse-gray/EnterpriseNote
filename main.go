@@ -46,17 +46,14 @@ func opendb() *sql.DB {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
-
 	err = db.Ping()
 	if err != nil {
 		panic(err)
 	}
-
 	return db
 }
 
@@ -199,13 +196,14 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 //Update a permission
+// @todo only note author can update
 func updatePermission(w http.ResponseWriter, r *http.Request) {
 	db := opendb()
 	defer db.Close()
 	var permission Permission
 	_ = json.NewDecoder(r.Body).Decode(&permission)
-	sqlStatement := `UPDATE permissions SET read_permission = $1, write_permission = $2 FROM note WHERE permissions.note_id = note.note_id AND permissions.note_id = $3 AND permissions.user_id = $4 AND note.author_id = $5`
-	_, err := db.Exec(sqlStatement, permission.ReadPermission, permission.WritePermission, permission.NoteID, permission.UserID, 1) //@todo get author_id from cookie (currently logged on user)
+	sqlStatement := `INSERT INTO permissions VALUES ($3, $4, $1, $2) ON CONFLICT (note_id, user_id) DO UPDATE SET read_permission = $1, write_permission = $2`
+	_, err := db.Exec(sqlStatement, permission.ReadPermission, permission.WritePermission, permission.NoteID, permission.UserID)
 	if err != nil {
 		panic(err)
 	}
