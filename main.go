@@ -41,10 +41,8 @@ type Permission struct {
 	WritePermission bool `json:"writepermission"`
 }
 
-//Get ALL notes
-func getNotes(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	//Connect to postgres db
+//Connect to postgres db
+func opendb() *sql.DB {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -53,12 +51,20 @@ func getNotes(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
 		panic(err)
 	}
+
+	return db
+}
+
+//Get ALL notes
+func getNotes(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	db := opendb()
+	defer db.Close()
 	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id WHERE author_id = $1 OR (permissions.user_id = $1 AND permissions.read_permission = true)`
 	rows, err := db.Query(sqlStatement, 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
@@ -85,21 +91,8 @@ func getNotes(w http.ResponseWriter, r *http.Request) {
 func getNote(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	//Connect to postgres db
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
+	db := opendb()
 	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
 	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id WHERE note.note_id = $1 AND (author_id = $2 OR (permissions.user_id = $2 AND permissions.read_permission = true))`
 	var note Note
 	row := db.QueryRow(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
@@ -117,23 +110,10 @@ func getNote(w http.ResponseWriter, r *http.Request) {
 func createNote(w http.ResponseWriter, r *http.Request) {
 	var note Note
 	_ = json.NewDecoder(r.Body).Decode(&note)
-	//Connect to postgres db
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
+	db := opendb()
 	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
 	sqlStatement := `INSERT INTO "note" (note_text, author_id) VALUES ($1, $2)`
-	_, err = db.Exec(sqlStatement, note.NoteText, 1) //@todo get author_id from cookie (currently logged on user)
+	_, err := db.Exec(sqlStatement, note.NoteText, 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
 	}
@@ -142,23 +122,10 @@ func createNote(w http.ResponseWriter, r *http.Request) {
 //Delete a note
 func deleteNote(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	//Connect to postgres db
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
+	db := opendb()
 	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
 	sqlStatement := `DELETE FROM "note" WHERE note_id = $1 AND author_id = $2`
-	_, err = db.Exec(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
+	_, err := db.Exec(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
 	}
@@ -167,24 +134,12 @@ func deleteNote(w http.ResponseWriter, r *http.Request) {
 //Update a note
 func updateNote(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
+	db := opendb()
 	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
 	var note Note
 	_ = json.NewDecoder(r.Body).Decode(&note)
 	sqlStatement := `UPDATE "note" SET note_text = $1 FROM permissions WHERE note.note_id = $2 AND (author_id = $3 OR (permissions.user_id = $3 AND permissions.write_permission = true))`
-	_, err = db.Exec(sqlStatement, note.NoteText, params["id"], 2) //@todo get author_id from cookie (currently logged on user)
+	_, err := db.Exec(sqlStatement, note.NoteText, params["id"], 2) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
 	}
@@ -193,21 +148,8 @@ func updateNote(w http.ResponseWriter, r *http.Request) {
 //Get ALL users
 func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	//Connect to postgres db
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
+	db := opendb()
 	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
 	sqlStatement := `SELECT * FROM "user"`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
@@ -234,23 +176,10 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 func createUser(w http.ResponseWriter, r *http.Request) {
 	var newUser User
 	_ = json.NewDecoder(r.Body).Decode(&newUser)
-	//Connect to postgres db
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
+	db := opendb()
 	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
 	sqlStatement := `INSERT INTO "user" (user_first_name, user_last_name) VALUES ($1, $2)`
-	_, err = db.Exec(sqlStatement, newUser.FirstName, newUser.LastName)
+	_, err := db.Exec(sqlStatement, newUser.FirstName, newUser.LastName)
 	if err != nil {
 		panic(err)
 	}
@@ -258,24 +187,12 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 //Update a user
 func updateUser(w http.ResponseWriter, r *http.Request) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
+	db := opendb()
 	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
 	var user User
 	_ = json.NewDecoder(r.Body).Decode(&user)
 	sqlStatement := `UPDATE "user" SET user_first_name = $1, user_last_name = $2 WHERE user_id = $3`
-	_, err = db.Exec(sqlStatement, user.FirstName, user.LastName, 1) //@todo get author_id from cookie (currently logged on user)
+	_, err := db.Exec(sqlStatement, user.FirstName, user.LastName, 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
 	}
@@ -283,24 +200,12 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 
 //Update a permission
 func updatePermission(w http.ResponseWriter, r *http.Request) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
+	db := opendb()
 	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
 	var permission Permission
 	_ = json.NewDecoder(r.Body).Decode(&permission)
-	sqlStatement := `UPDATE permissions SET read_permission = $1, write_permission = $2 FROM permissions AS t1 JOIN note ON t1.note_id = note.note_id WHERE permissions.note_id = $3 AND permissions.user_id = $4 AND note.author_id = $5`
-	_, err = db.Exec(sqlStatement, permission.ReadPermission, permission.WritePermission, permission.NoteID, permission.UserID, 2) //@todo get author_id from cookie (currently logged on user)
+	sqlStatement := `UPDATE permissions SET read_permission = $1, write_permission = $2 FROM note WHERE permissions.note_id = note.note_id AND permissions.note_id = $3 AND permissions.user_id = $4 AND note.author_id = $5`
+	_, err := db.Exec(sqlStatement, permission.ReadPermission, permission.WritePermission, permission.NoteID, permission.UserID, 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
 	}
