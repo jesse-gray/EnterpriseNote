@@ -95,7 +95,7 @@ func getNote(w http.ResponseWriter, r *http.Request) {
 	row := db.QueryRow(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
 	switch err := row.Scan(&note.NoteID, &note.NoteText, &note.AuthorID); err {
 	case sql.ErrNoRows:
-		fmt.Println("No notes were found!")
+		json.NewEncoder(w).Encode(&note)
 	case nil:
 		json.NewEncoder(w).Encode(note)
 	default:
@@ -109,7 +109,7 @@ func createNote(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&note)
 	db := opendb()
 	defer db.Close()
-	sqlStatement := `INSERT INTO "note" (note_text, author_id) VALUES ($1, $2)`
+	sqlStatement := `INSERT INTO note (note_text, author_id) VALUES ($1, $2)`
 	_, err := db.Exec(sqlStatement, note.NoteText, 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
@@ -121,7 +121,7 @@ func deleteNote(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
-	sqlStatement := `DELETE FROM "note" WHERE note_id = $1 AND author_id = $2`
+	sqlStatement := `DELETE FROM note WHERE note_id = $1 AND author_id = $2`
 	_, err := db.Exec(sqlStatement, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
@@ -135,7 +135,7 @@ func updateNote(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	var note Note
 	_ = json.NewDecoder(r.Body).Decode(&note)
-	sqlStatement := `UPDATE "note" SET note_text = $1 FROM permissions WHERE note.note_id = $2 AND (author_id = $3 OR (permissions.user_id = $3 AND permissions.write_permission = true))`
+	sqlStatement := `UPDATE note SET note_text = $1 FROM permissions WHERE note.note_id = $2 AND (author_id = $3 OR (permissions.user_id = $3 AND permissions.write_permission = true))`
 	_, err := db.Exec(sqlStatement, note.NoteText, params["id"], 2) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
