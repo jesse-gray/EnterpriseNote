@@ -182,6 +182,17 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Delete a user
+func deleteUser(w http.ResponseWriter, r *http.Request) {
+	db := opendb()
+	defer db.Close()
+	sqlStatement := `DELETE FROM "user" WHERE user_id = $1`
+	_, err := db.Exec(sqlStatement, 1) //@todo get author_id from cookie (currently logged on user)
+	if err != nil {
+		panic(err)
+	}
+}
+
 //Update a user
 func updateUser(w http.ResponseWriter, r *http.Request) {
 	db := opendb()
@@ -238,6 +249,7 @@ func main() {
 	r.HandleFunc("/api/notes/{id}", deleteNote).Methods("DELETE")
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
+	r.HandleFunc("/api/users", deleteUser).Methods("DELETE")
 	r.HandleFunc("/api/users", updateUser).Methods("PUT")
 	r.HandleFunc("/api/permission", updatePermission).Methods("PUT")
 	log.Fatal(http.ListenAndServe(":8000", r))
