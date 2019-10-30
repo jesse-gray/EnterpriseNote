@@ -8,6 +8,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//Note Struct
+type Note struct {
+	NoteID   string `json:"noteid"`
+	NoteText string `json:"notetext"`
+	AuthorID int    `json:"authorid"`
+}
+
 //Get ALL notes
 func getNotes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")

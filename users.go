@@ -5,6 +5,13 @@ import (
 	"net/http"
 )
 
+//User Struct
+type User struct {
+	UserID    string `json:"userid"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+}
+
 //Get ALL users
 func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")

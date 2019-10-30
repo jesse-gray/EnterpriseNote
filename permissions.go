@@ -6,6 +6,14 @@ import (
 	"net/http"
 )
 
+//Permission Struct
+type Permission struct {
+	NoteID          int  `json:"noteid"`
+	UserID          int  `json:"userid"`
+	ReadPermission  bool `json:"readpermission"`
+	WritePermission bool `json:"writepermission"`
+}
+
 //Update a permission
 func updatePermission(w http.ResponseWriter, r *http.Request) {
 	db := opendb()
