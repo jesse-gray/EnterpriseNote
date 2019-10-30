@@ -1,0 +1,36 @@
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1>Update note</h1>
+    <hr>
+    <form id="updateForm">
+        <textarea name="notetext" rows="10" cols="100"></textarea>
+        <input type="submit">
+    </form>
+    <br>
+<body>
+
+<script type="text/javascript">
+  const serialize_form = form => JSON.stringify(
+  Array.from(new FormData(form).entries())
+       .reduce((m, [ key, value ]) => Object.assign(m, { [key]: value }), {})
+);
+
+$('#updateForm').on('submit', function(event) {
+  event.preventDefault();
+  const json = serialize_form(this);
+  console.log(json);
+  $.ajax({
+    type: 'PUT',
+    url: 'http://localhost:8000/api/notes/3',
+    dataType: 'json',
+    data: json,
+    contentType: 'application/json',
+    success: function(data) {
+      alert(data)
+    }
+  });
+});
+</script>

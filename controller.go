@@ -24,3 +24,8 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("create.html")
 	t.Execute(w, nil)
 }
+
+func updateHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("updateNote.html")
+	t.Execute(w, nil)
+}

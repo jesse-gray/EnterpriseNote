@@ -15,6 +15,7 @@ func main() {
 	//Route handlers
 	r.HandleFunc("/api/index", indexHandler)
 	r.HandleFunc("/api/create", createHandler)
+	r.HandleFunc("/api/updateNote", updateHandler)
 	r.HandleFunc("/api/notes", getNotes).Methods("GET")
 	r.HandleFunc("/api/notes/{id}", getNote).Methods("GET")
 	r.HandleFunc("/api/notes", createNote).Methods("POST")

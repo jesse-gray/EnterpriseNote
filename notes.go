@@ -94,7 +94,7 @@ func updateNote(w http.ResponseWriter, r *http.Request) {
 	var note Note
 	_ = json.NewDecoder(r.Body).Decode(&note)
 	sqlStatement := `UPDATE note SET note_text = $1 FROM permissions WHERE note.note_id = $2 AND (author_id = $3 OR (permissions.user_id = $3 AND permissions.write_permission = true))`
-	_, err := db.Exec(sqlStatement, note.NoteText, params["id"], 2) //@todo get author_id from cookie (currently logged on user)
+	_, err := db.Exec(sqlStatement, note.NoteText, params["id"], 1) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
 	}
