@@ -21,7 +21,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func createHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("create.html")
+	t, _ := template.ParseFiles("createNote.html")
 	t.Execute(w, nil)
 }
 
