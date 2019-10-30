@@ -7,7 +7,6 @@ import (
 )
 
 //Update a permission
-// @todo only note author can update
 func updatePermission(w http.ResponseWriter, r *http.Request) {
 	db := opendb()
 	defer db.Close()
