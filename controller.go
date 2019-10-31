@@ -20,8 +20,13 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
-func viewHandler(w http.ResponseWriter, r *http.Request) {
+func viewNotesHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("viewNotes.html")
+	t.Execute(w, nil)
+}
+
+func viewUsersHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("viewUsers.html")
 	t.Execute(w, nil)
 }
 

@@ -14,7 +14,8 @@ func main() {
 
 	//Route handlers
 	r.HandleFunc("/api/home", homeHandler)
-	r.HandleFunc("/api/viewNotes", viewHandler)
+	r.HandleFunc("/api/viewNotes", viewNotesHandler)
+	r.HandleFunc("/api/viewUsers", viewUsersHandler)
 	r.HandleFunc("/api/createNote", createHandler)
 	r.HandleFunc("/api/updateNote", updateHandler)
 	r.HandleFunc("/api/notes", getNotes).Methods("GET")
