@@ -35,7 +35,7 @@ func updatePermission(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	//Execute the update if user exists and current user is author
-	if author == 2 && userExists { //@todo get author_id from cookie (currently logged on user)
+	if author == 1 && userExists { //@todo get author_id from cookie (currently logged on user)
 		sqlStatement = `INSERT INTO permissions VALUES ($3, $4, $1, $2) ON CONFLICT (note_id, user_id) DO UPDATE SET read_permission = $1, write_permission = $2`
 		_, err = db.Exec(sqlStatement, permission.ReadPermission, permission.WritePermission, permission.NoteID, permission.UserID)
 		if err != nil {

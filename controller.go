@@ -39,3 +39,8 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("updateNote.html")
 	t.Execute(w, nil)
 }
+
+func updatePermsHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("updatePerms.html")
+	t.Execute(w, nil)
+}

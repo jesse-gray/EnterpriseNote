@@ -1,0 +1,49 @@
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/javascript/javascript.js"></script>
+</head>
+
+<body onload="loadPage()">
+    <h1>Update Permissions</h1>
+    <hr>
+    <form id="updateForm">
+        <h3 id="noteid"></h3>
+        <input hidden id="formnoteid" name="noteid" value="">
+        <label>User ID: </label>
+        <input type="number" name="userid"><br>
+        <label>Read Permissions:</label>
+        <input type="radio" name="readPerm" value=true>Yes
+        <input type="radio" name="readPerm" value=false>No<br>
+        <label>Write Permissions:</label>
+        <input type="radio" name="writePerm" value=true>Yes
+        <input type="radio" name="writePerm" value=false>No<br>
+        <br>
+        <input type="submit">
+    </form>
+    <hr>
+    <button id="homeBtn" onclick='location.href="home"'>Home</button>
+    <br>
+<body>
+
+<script type="text/javascript">
+  const serialize_form = form => JSON.stringify(
+  Array.from(new FormData(form).entries())
+       .reduce((m, [ key, value ]) => Object.assign(m, { [key]: value }), {})
+);
+
+$('#updateForm').on('submit', function(event) {
+  event.preventDefault();
+  const json = serialize_form(this);
+  console.log(json);
+  $.ajax({
+    type: 'PUT',
+    url: 'http://localhost:8000/api/permission',
+    dataType: 'json',
+    data: json,
+    contentType: 'application/json',
+    success: function(data) {
+      alert(data)
+    }
+  });
+});
+</script>
