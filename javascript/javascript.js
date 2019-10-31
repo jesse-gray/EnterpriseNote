@@ -22,11 +22,20 @@ function processJSON(arr) {
     for (var i = 0; i < arr.length; i++) {
         //Display extracted article into the divs
         if (arr[i].authorid == 1) { //TODO replace with currently logged in
-            yourOutput += '<div class="noteCard"><h3>NoteID: ' + arr[i].noteid + '</h3><p>Note Text: ' + arr[i].notetext + '</p></div><button id="updateBtn" value="' + arr[i].noteid + '" onclick="location.href=\'updateNote\'" type="button">Update</button><button id="deleteButton" value="' + arr[i].noteid + '">Delete</button>';
+            yourOutput += '<div class="noteCard"><h3>NoteID: ' + arr[i].noteid + '</h3><p>Note Text: ' + arr[i].notetext + '</p></div><button id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button><button id="deleteButton" value="' + arr[i].noteid + '">Delete</button>';
         } else {
-            shareOutput += '<div class="noteCard"><h3>NoteID: ' + arr[i].noteid + '</h3><p>Note Text: ' + arr[i].notetext + '</p></div><button id="updateBtn" value="' + arr[i].noteid + '" onclick="location.href=\'updateNote\'" type="button">Update</button>';
+            shareOutput += '<div class="noteCard"><h3>NoteID: ' + arr[i].noteid + '</h3><p>Note Text: ' + arr[i].notetext + '</p></div><button id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button>';
         }
     }
     document.getElementById("yourNotes").innerHTML = yourOutput;
     document.getElementById("sharedNotes").innerHTML = shareOutput;
+}
+
+function loadPage() {
+    document.getElementById("noteid").innerHTML = "Note ID: " + localStorage.getItem("noteid");
+}
+
+function updateNote(noteID) {
+    localStorage.setItem("noteid", noteID)
+    location.href = 'updateNote';
 }

@@ -1,12 +1,13 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/javascript/javascript.js"></script>
 </head>
 
-<body>
+<body onload="loadPage()">
     <h1>Update note</h1>
     <hr>
     <form id="updateForm">
-        <input type="hidden" name="noteid" >
+        <h3 id="noteid"></h3>
         <label>Note Text:</label><br>
         <textarea name="notetext" rows="10" cols="100" ></textarea><br>
         <input type="submit">
@@ -25,7 +26,7 @@ $('#updateForm').on('submit', function(event) {
   const json = serialize_form(this);
   $.ajax({
     type: 'PUT',
-    url: 'http://localhost:8000/api/notes/3',
+    url: 'http://localhost:8000/api/notes/' + localStorage.getItem("noteid"),
     dataType: 'json',
     data: json,
     contentType: 'application/json',
