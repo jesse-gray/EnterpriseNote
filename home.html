@@ -1,0 +1,17 @@
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1>Enterprise Note</h1>
+    <p>A shared notebook application</p>
+    <hr>
+    <p>Welcome, {{ .firstName}}, what would you like to do?</p>
+    <hr>
+    <div id="buttons">
+        <button id="createNote" onclick="location.href='createNote'" type="button">Create Note</button>
+        <button id="viewNotes" onclick="location.href='viewNotes'" type="button">View Notes</button>
+        <button id="viewUsers" onclick="location.href='viewUsers'" type="button">View Users</button>
+        <button id="logout">Logout</button>
+    </div>
+</body>

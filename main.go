@@ -13,8 +13,9 @@ func main() {
 	r := mux.NewRouter()
 
 	//Route handlers
-	r.HandleFunc("/api/index", indexHandler)
-	r.HandleFunc("/api/create", createHandler)
+	r.HandleFunc("/api/home", homeHandler)
+	r.HandleFunc("/api/viewNotes", viewHandler)
+	r.HandleFunc("/api/createNote", createHandler)
 	r.HandleFunc("/api/updateNote", updateHandler)
 	r.HandleFunc("/api/notes", getNotes).Methods("GET")
 	r.HandleFunc("/api/notes/{id}", getNote).Methods("GET")
@@ -26,5 +27,8 @@ func main() {
 	r.HandleFunc("/api/users", deleteUser).Methods("DELETE")
 	r.HandleFunc("/api/users", updateUser).Methods("PUT")
 	r.HandleFunc("/api/permission", updatePermission).Methods("PUT")
+	//JavaScript and CSS handlers
+	r.PathPrefix("/javascript/").Handler(http.StripPrefix("/javascript/", http.FileServer(http.Dir("./javascript"))))
+	r.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir("./css"))))
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
