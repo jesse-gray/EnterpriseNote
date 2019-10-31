@@ -22,7 +22,7 @@ function processNotes(arr) {
     for (var i = 0; i < arr.length; i++) {
         //Display extracted article into the divs
         if (arr[i].authorid == 1) { //TODO replace with currently logged in
-            yourOutput += '<div class="noteCard"><h3>NoteID: ' + arr[i].noteid + '</h3><p>Note Text: ' + arr[i].notetext + '</p></div><button id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button><button id="deleteButton" value="' + arr[i].noteid + '">Delete</button><button id="updatePerms" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update Permissions</button>';
+            yourOutput += '<div class="noteCard"><h3>NoteID: ' + arr[i].noteid + '</h3><p>Note Text: ' + arr[i].notetext + '</p></div><button id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button><button id="deleteButton" value="' + arr[i].noteid + '" onclick="deleteNote(this.value)" type="button">Delete</button><button id="updatePerms" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update Permissions</button>';
         } else {
             shareOutput += '<div class="noteCard"><h3>NoteID: ' + arr[i].noteid + '</h3><p>Note Text: ' + arr[i].notetext + '</p></div><button id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button>';
         }
@@ -65,4 +65,12 @@ function loadPage() {
 function updateNote(noteID) {
     localStorage.setItem("noteid", noteID)
     location.href = 'updateNote';
+}
+
+function deleteNote(noteID) {
+    $.ajax({
+        type: 'DELETE',
+        url: 'http://localhost:8000/api/notes/' + noteID
+    });
+    location.href = 'home';
 }
