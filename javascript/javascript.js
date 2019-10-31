@@ -1,15 +1,11 @@
 //Loads notes
 function loadRSS() {
-    //Use CORS API website as proxy to retrieve XML file
-    var proxy = 'http://';
-    var url = "localhost:8000/api/notes";
+    var url = "http://localhost:8000/api/notes";
 
     //Declare XMLHttpRequest Object
     var xmlhttp = new XMLHttpRequest();
-    //Send a request from Client side to Server to retrieve the xml document
-    xmlhttp.open("GET", proxy + url, true);
+    xmlhttp.open("GET", url, true);
     xmlhttp.send();
-    //Check if the entire xml document has been received? If so, process it.
     xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             var myArr = JSON.parse(this.responseText);
@@ -26,9 +22,9 @@ function processJSON(arr) {
     for (var i = 0; i < arr.length; i++) {
         //Display extracted article into the divs
         if (arr[i].authorid == 1) { //TODO replace with currently logged in
-            yourOutput += '<div class="noteCard"><h3>' + arr[i].noteid + '</h3><p>' + arr[i].notetext + '</p></div><button id="updateBtn" onclick="location.href="createNote" type="button">Update</button><button id="deleteButton">Delete</button>';
+            yourOutput += '<div class="noteCard"><h3>NoteID: ' + arr[i].noteid + '</h3><p>Note Text: ' + arr[i].notetext + '</p></div><button id="updateBtn" value="' + arr[i].noteid + '" onclick="location.href=\'updateNote\'" type="button">Update</button><button id="deleteButton" value="' + arr[i].noteid + '">Delete</button>';
         } else {
-            shareOutput += '<div class="noteCard"><h3>' + arr[i].noteid + '</h3><p>' + arr[i].notetext + '</p></div><button id="updateBtn">Update</button>';
+            shareOutput += '<div class="noteCard"><h3>NoteID: ' + arr[i].noteid + '</h3><p>Note Text: ' + arr[i].notetext + '</p></div><button id="updateBtn" value="' + arr[i].noteid + '" onclick="location.href=\'updateNote\'" type="button">Update</button>';
         }
     }
     document.getElementById("yourNotes").innerHTML = yourOutput;
