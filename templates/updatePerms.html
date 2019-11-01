@@ -8,22 +8,43 @@
     <h1>Update Permissions</h1>
     <hr>
     <form id="updateForm">
-        <h3 id="noteid"></h3>
-        <input hidden id="formnoteid" name="noteid" value="">
-        <label>User ID: </label>
-        <input type="number" id="userid" name="userid"><br>
-        <label>Read Permissions:</label>
-        <input type="radio" name="readPerm" value=true>Yes
-        <input type="radio" name="readPerm" value=false>No<br>
-        <label>Write Permissions:</label>
-        <input type="radio" name="writePerm" value=true>Yes
-        <input type="radio" name="writePerm" value=false>No<br>
-        <br>
-        <input type="submit">
+        <div class="form-group row">
+            <label id="noteid" class="col-sm-2 col-form-label">Note ID: </label>
+            <div class="col-sm-10">
+                <input type="text" readonly class="form-control-plaintext" id="formnoteid" name="noteid" value="">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">User ID: </label>
+            <input type="number" id="userid" name="userid">
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Read Permissions:</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="readPerm" value=true>
+                <label class="form-check-label" for="inlineRadio1">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="readPerm" value=false>
+                <label class="form-check-label" for="inlineRadio1">No</label>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Write Permissions:</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="writedPerm" value=true>
+                <label class="form-check-label" for="inlineRadio1">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="writePerm" value=false>
+                <label class="form-check-label" for="inlineRadio1">No</label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-secondary">Submit</button>
     </form>
     <hr>
-    <button id="backBtn" onclick='location.href="viewNotes"'>Back</button>
-    <button id="homeBtn" onclick='location.href="home"'>Home</button>
+    <button id="backBtn" class="btn btn-secondary" onclick='location.href="viewNotes"'>Back</button>
+    <button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
     <br>
 <body>
 

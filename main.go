@@ -13,6 +13,7 @@ func main() {
 	r := mux.NewRouter()
 
 	//Route handlers
+	r.HandleFunc("/api/", indexHandler)
 	r.HandleFunc("/api/home", homeHandler)
 	r.HandleFunc("/api/viewNotes", viewNotesHandler)
 	r.HandleFunc("/api/viewUsers", viewUsersHandler)

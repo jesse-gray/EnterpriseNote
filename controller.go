@@ -15,6 +15,11 @@ import (
 // 	t.Execute(w, nil)
 // }
 
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/index.html")
+	t.Execute(w, nil)
+}
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/home.html")
 	t.Execute(w, nil)
