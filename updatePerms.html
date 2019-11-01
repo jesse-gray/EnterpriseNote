@@ -10,7 +10,7 @@
         <h3 id="noteid"></h3>
         <input hidden id="formnoteid" name="noteid" value="">
         <label>User ID: </label>
-        <input type="number" name="userid"><br>
+        <input type="number" id="userid" name="userid"><br>
         <label>Read Permissions:</label>
         <input type="radio" name="readPerm" value=true>Yes
         <input type="radio" name="readPerm" value=false>No<br>
@@ -26,24 +26,25 @@
 <body>
 
 <script type="text/javascript">
-  const serialize_form = form => JSON.stringify(
-  Array.from(new FormData(form).entries())
-       .reduce((m, [ key, value ]) => Object.assign(m, { [key]: value }), {})
-);
+    $('#updateForm').on('submit', function(event) {
+    event.preventDefault();
 
-$('#updateForm').on('submit', function(event) {
-  event.preventDefault();
-  const json = serialize_form(this);
-  console.log(json);
-  $.ajax({
-    type: 'PUT',
-    url: 'http://localhost:8000/api/permission',
-    dataType: 'json',
-    data: json,
-    contentType: 'application/json',
-    success: function(data) {
-      alert(data)
-    }
-  });
+    var noteid = $('#formnoteid').val()
+    var userid = $('#userid').val()
+    var readpermission = $('input[name="readPerm"]:checked').val()
+    var writepermission = $('input[name="writePerm"]:checked').val()
+
+    var json = JSON.stringify({"noteid":parseInt(noteid), "userid":parseInt(userid), "readpermission":(readpermission === "true"), "writepermission":(writepermission === "true")})
+    $.ajax({
+        type: 'PUT',
+        url: 'http://localhost:8000/api/permission',
+        dataType: 'json',
+        data: json,
+        contentType: 'application/json',
+        success: function(data) {
+        alert(data)
+        }
+    });
+    location.href='viewNotes';
 });
 </script>
