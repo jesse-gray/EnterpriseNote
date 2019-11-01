@@ -10,9 +10,11 @@
             <p class="lead">A shared notebook application.</p>
         </div>
     </div>
-    <p>Welcome, {{ .firstName}}, what would you like to do?</p>
+    <div class="container-fluid">
+        <p>Welcome, {{ .firstName}}, what would you like to do?</p>
+    </div>
     <hr>
-    <div id="buttons">
+    <div id="buttons" class="container-fluid">
         <button id="createNote" class="btn btn-secondary" onclick="location.href='createNote'" type="button">Create Note</button>
         <button id="viewNotes" class="btn btn-secondary" onclick="location.href='viewNotes'" type="button">View Notes</button>
         <button id="viewUsers" class="btn btn-secondary" onclick="location.href='viewUsers'" type="button">View Users</button><br><br>
