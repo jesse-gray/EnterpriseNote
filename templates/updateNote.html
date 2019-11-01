@@ -5,17 +5,30 @@
 </head>
 
 <body onload="loadPage()">
-    <h1>Update note</h1>
-    <hr>
+    <div class="jumbotron jumbotron-fluid">
+  		<div class="container-fluid">
+			<h1 class="display-4">Update note</h1>
+			<p class="lead">This is where you can update the details of a note.</p>
+        </div>
+    </div>
     <form id="updateForm">
-        <h3 id="noteid"></h3>
-        <label>Note Text:</label><br>
-        <textarea name="notetext" rows="10" cols="100" ></textarea><br>
-        <input type="submit">
+        <div class="form-group row">
+			<label id="noteid" class="col-sm-2 col-form-label">Note ID: </label>
+			<div class="col-sm-10">
+              	<input type="text" readonly class="form-control-plaintext" id="formnoteid" name="noteid" value="">
+          	</div>
+        </div>
+        <div class="form-group row">
+          	<label class="col-sm-2 col-form-label">Note Text: </label>
+        </div>
+        <div class="form-group row">
+          	<textarea name="notetext" rows="10" cols="100" ></textarea>
+        </div>
+        <button type="submit" class="btn btn-secondary">Submit</button>
     </form>
     <hr>
-    <button id="homeBtn" onclick='location.href="home"'>Home</button>
-    <button id="homeBtn" onclick='location.href="home"'>Home</button>
+    <button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
+    <button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
     <br>
 <body>
 
