@@ -44,3 +44,8 @@ func updatePermsHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/updatePerms.html")
 	t.Execute(w, nil)
 }
+
+func findNoteHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/findNote.html")
+	t.Execute(w, nil)
+}
