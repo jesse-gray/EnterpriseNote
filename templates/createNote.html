@@ -10,15 +10,26 @@
             <p class="lead">Use this form to create a new note.</p>
         </div>
     </div>
-    <form id="createForm" action="http://localhost:8000/api/notes" method="post">
-        <textarea name="notetext" rows="10" cols="100"></textarea><br>
-        <label>Use saved sharing settings?</label>
-        <input type="checkbox" id="savedOption"><br>
-        <input type="submit">
-    </form>
+    
+    <div class="container-fluid">
+		<form id="createForm" action="http://localhost:8000/api/notes" method="post">
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">Note Text: </label>
+			</div>
+			<div class="form-group row-fluid">
+				<textarea name="notetext" rows="10" cols="100"></textarea><br>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="checkbox" id="savedOption">
+				<label class="form-check-label" for="savedOption">Use saved sharing settings?</label>
+			</div><br><br>
+			<input type="submit" class="btn btn-secondary">
+		</form>
+	</div>
     <hr>
-    <button id="homeBtn" onclick='location.href="home"'>Home</button>
-    <br>
+    <div class="container-fluid">
+      	<button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
+    </div>
 <body>
 
 <script type="text/javascript">

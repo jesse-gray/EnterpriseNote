@@ -5,11 +5,14 @@
 </head>
 
 <body onload="loadUsers()">
-    <h1>View Users</h1>
-    <p>Here you can see all of the users in the Enterprise Note system</p>
-    <hr>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container-fluid">
+            <h1 class="display-4">View Users</h1>
+            <p class="lead">Here you can see all of the users in the Enterprise Note system.</p>
+        </div>
+    </div>
     <div id="userList">
     </div>
     <hr>
-    <button id="homeBtn" onclick='location.href="home"'>Home</button>
+    <button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
 </body>
