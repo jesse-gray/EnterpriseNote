@@ -16,31 +16,31 @@ import (
 // }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("home.html")
+	t, _ := template.ParseFiles("templates/home.html")
 	t.Execute(w, nil)
 }
 
 func viewNotesHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("viewNotes.html")
+	t, _ := template.ParseFiles("templates/viewNotes.html")
 	t.Execute(w, nil)
 }
 
 func viewUsersHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("viewUsers.html")
+	t, _ := template.ParseFiles("templates/viewUsers.html")
 	t.Execute(w, nil)
 }
 
 func createHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("createNote.html")
+	t, _ := template.ParseFiles("templates/createNote.html")
 	t.Execute(w, nil)
 }
 
 func updateHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("updateNote.html")
+	t, _ := template.ParseFiles("templates/updateNote.html")
 	t.Execute(w, nil)
 }
 
 func updatePermsHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("updatePerms.html")
+	t, _ := template.ParseFiles("templates/updatePerms.html")
 	t.Execute(w, nil)
 }
