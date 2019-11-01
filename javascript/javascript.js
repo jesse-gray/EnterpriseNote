@@ -68,11 +68,13 @@ function updateNote(noteID) {
 }
 
 function deleteNote(noteID) {
-    $.ajax({
-        type: 'DELETE',
-        url: 'http://localhost:8000/api/notes/' + noteID
-    });
-    location.href = 'home';
+    if (window.confirm("Are you sure you want to delete note " + noteID + "?")) {
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:8000/api/notes/' + noteID
+        });
+        location.href = 'home';
+    }
 }
 
 function updatePerms(noteID) {
