@@ -1,10 +1,10 @@
 --Need to have a database "enterprisedb"
 --Drop all tables to start fresh
---DROP SCHEMA public CASCADE;
---CREATE SCHEMA public;
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
 
---GRANT ALL ON SCHEMA public TO postgres;
---GRANT ALL ON SCHEMA public TO public;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO public;
 
 --CREATE tables
 CREATE TABLE "user" (
@@ -26,7 +26,7 @@ CREATE TABLE note (
 );
 
 CREATE TABLE permissions (
-	note_id				int			REFERENCES note(note_id),
+	note_id				int			REFERENCES note(note_id) ON DELETE CASCADE,
 	user_id				int			REFERENCES "user"(user_id) ON DELETE CASCADE,
 	read_permission		bool		NOT NULL		DEFAULT false,
 	write_permission	bool		NOT NULL		DEFAULT false,	
