@@ -4,9 +4,12 @@
 </head>
 
 <body>
-    <h1>Create new note</h1>
-    <p>Use this form to create a new note</p>
-    <hr>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container-fluid">
+            <h1 class="display-4">Create new note</h1>
+            <p class="lead">Use this form to create a new note.</p>
+        </div>
+    </div>
     <form id="createForm" action="http://localhost:8000/api/notes" method="post">
         <textarea name="notetext" rows="10" cols="100"></textarea><br>
         <label>Use saved sharing settings?</label>
