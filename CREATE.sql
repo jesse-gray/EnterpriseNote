@@ -11,6 +11,7 @@ CREATE TABLE "user" (
 	user_id					int					GENERATED ALWAYS AS IDENTITY,
 	user_first_name			varchar(25)			NOT NULL,
 	user_last_name			varchar(25),
+	user_password			varchar(255)			NOT NULL,
 	CONSTRAINT pk_user_id PRIMARY KEY (user_id)
 )WITH ( 
   OIDS=FALSE 
@@ -36,9 +37,9 @@ CREATE TABLE permissions (
 );
 
 --Mock Data
-INSERT INTO "user" (user_first_name, user_last_name)
-VALUES 	('John', 'Smith'),
-		('Sharon', 'Tomkins');
+INSERT INTO "user" (user_first_name, user_last_name, user_password)
+VALUES 	('John', 'Smith', 'password'),
+		('Sharon', 'Tomkins', 'password');
 		
 INSERT INTO note (note_text, author_id)
 VALUES 	('This is sample text for the first note', 1),
