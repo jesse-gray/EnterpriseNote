@@ -42,7 +42,7 @@ func checkPassword (password string) bool {
 }
 
 // function to add a new password to the table need to add if statement to check if password already exists for statement
-func createPassword(password Pword) {
+func createPassword(w http.ResponseWriter, r *http.Request) {
 	
 	var newPassword Pword
 	_ = json.NewDecoder(r.Body).Decode(&Pword)
@@ -60,4 +60,16 @@ func createPassword(password Pword) {
 	return "Password successfully created for the account"
 }
 
-func updatePassword(password Pword)
+func updatePassword(w http.ResponseWriter, r *http.Request) string{
+	params := mux.Vars(r)
+	var newPassword Pword
+	_ = json.NewDecoder(r.Body).Decode(&Pword)
+	db := opendb()
+	defer db.Close()
+	sqlStatement, err := db.Prepare("UPDATE pasword SET newPassword = $1 WHERE newPassword.user_id")
+	_, err = sqlStatement.Exec(newPassword.Pword, newPassword.PwordID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return "new password added"
+}
