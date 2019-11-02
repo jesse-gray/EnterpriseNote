@@ -37,10 +37,10 @@ CREATE TABLE permissions (
 
 --Create a table on the program side to store passwords for login, passwords at this stage are unprotected
 
-CREATE TABLE pword (
+CREATE TABLE pasword (
 	pword_id int NOT NULL UNIQUE AUTO_INCREMENT,
 	user_id int,
-	pword varchar(25),
+	password varchar(25),
 	PRIMARY KEY (pword_id)
 );
 
