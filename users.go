@@ -75,3 +75,4 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 }
+
