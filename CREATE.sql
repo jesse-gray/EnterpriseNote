@@ -60,5 +60,7 @@ VALUES 	('This is sample text for the first note', 1),
 INSERT INTO permissions
 VALUES 	(2, 1, true, false);
 
-INSERT INTO pword
+INSERT INTO pword (user_id, pword)
+VAlUES 	(1, 'password'),
+		(2, 'password');
 
