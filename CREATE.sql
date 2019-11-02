@@ -35,7 +35,7 @@ CREATE TABLE permissions (
   OIDS=FALSE 
 );
 
---Create a table on the program side to store passwords for login
+--Create a table on the program side to store passwords for login, passwords at this stage are unprotected
 
 CREATE TABLE pword (
 	pword_id int NOT NULL UNIQUE AUTO_INCREMENT,
@@ -60,6 +60,7 @@ VALUES 	('This is sample text for the first note', 1),
 INSERT INTO permissions
 VALUES 	(2, 1, true, false);
 
+-- sample passwords
 INSERT INTO pword (user_id, pword)
 VAlUES 	(1, 'password'),
 		(2, 'password');
