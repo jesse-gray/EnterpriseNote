@@ -35,6 +35,19 @@ CREATE TABLE permissions (
   OIDS=FALSE 
 );
 
+--Create a table on the program side to store passwords for login
+
+CREATE TABLE pword (
+	pword_id int NOT NULL UNIQUE AUTO_INCREMENT,
+	user_id int,
+	pword varchar(25),
+	PRIMARY KEY (pword_id)
+);
+
+ALTER TABLE pword
+	ADD CONSTRAINT 	user_id FOREIGN KEY (user_id)
+	REFERENCES "user" (user_id);
+
 --Mock Data
 INSERT INTO "user" (user_first_name, user_last_name)
 VALUES 	('John', 'Smith'),
@@ -46,3 +59,6 @@ VALUES 	('This is sample text for the first note', 1),
 		
 INSERT INTO permissions
 VALUES 	(2, 1, true, false);
+
+INSERT INTO pword
+
