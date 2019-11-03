@@ -36,6 +36,16 @@ CREATE TABLE permissions (
   OIDS=FALSE 
 );
 
+CREATE TABLE favourites (
+	author_id			int			REFERENCES "user"(user_id) ON DELETE CASCADE,
+	favourite_id		int			REFERENCES "user"(user_id) ON DELETE CASCADE,	
+	read_permission		bool		NOT NULL		DEFAULT false,
+	write_permission	bool		NOT NULL		DEFAULT false,	
+	CONSTRAINT pk_user_id_favourite_id PRIMARY KEY (author_id, favourite_id) 
+)WITH ( 
+  OIDS=FALSE 
+);
+
 --Mock Data
 INSERT INTO "user" (user_first_name, user_last_name, user_password)
 VALUES 	('John', 'Acers', 'password'),
@@ -74,3 +84,20 @@ VALUES 	(2, 1, true, false),
 		(7, 3, true, true),
 		(8, 3, true, false),
 		(8, 5, true, true);
+
+INSERT INTO favourites
+VALUES 	(1, 3, true, false),
+		(1, 5, true, true),
+		(1, 6, true, true),
+		(2, 1, true, false),
+		(2, 5, true, true),
+		(3, 2, true, false),
+		(4, 1, true, true),
+		(4, 2, true, true),
+		(4, 6, true, true),
+		(5, 2, true, false),
+		(5, 4, true, true),
+		(6, 1, true, false),
+		(6, 2, true, true),
+		(6, 3, true, false),
+		(6, 5, true, true);
