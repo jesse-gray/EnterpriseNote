@@ -9,7 +9,7 @@ import (
 )
 
 // Use the uuid library to create 128 bit numbers for session id's, these will be unique
-
+// cookies will be used to ensure a valid user is using the program can evaluate his notes
 // function to create the cookie uses the uuid library to give it a unique id, based on time stamp and MAC address
 
 func createCookie() string {
@@ -63,3 +63,4 @@ func getCookie(r *http.Request) (cookieID string) {
 	cookieID = cookieTracer.Value
 	return cookieID
 }
+

@@ -134,7 +134,6 @@ function searchSQL(w http.ResponseWriter, r *http.Request){
 		notes = append(notes, note)
 	}
 	json.NewEncoder(w).Encode(&notes) // need to add error functionality here
-
 }
 
 
