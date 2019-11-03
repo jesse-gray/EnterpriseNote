@@ -76,3 +76,12 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func checkUser(userID int) bool {
+	var userID int
+
+	db := opendb()
+	defer db.Close()
+	var user User
+}
+
+func getUserID

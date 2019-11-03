@@ -73,3 +73,5 @@ func updatePassword(w http.ResponseWriter, r *http.Request) string{
 	}
 	return "new password added"
 }
+
+// adding in a log in function

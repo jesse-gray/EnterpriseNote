@@ -34,4 +34,42 @@ func validateUser(user string) bool {
 }
 
 // function to execute text search in SQL
-func 
+
+func searchSQL (body string, userID int) []Note {
+	var notes []Note
+	w http.ResponseWriter, r *http.Request
+
+	db := opendb()
+	defer db.Close()
+
+	sqlStatement := db.Prepare("SELECT note.note_id, note.note_text, note.author_id FROM LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) WHERE body")
+}
+
+function searchSQL(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	db := opendb()
+	defer db.Close()
+	var notes []Note
+	var anote Note
+	sqlStatement := db.Prepare("SELECT note.note_id, note.note_text, note.author_id FROM note LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) WHERE note_text ~ $2 AND note.author_id = $1 OR (permissions.user_id = $1 AND (permissions.read_permission = TRUE))")
+	if err != nil {
+		log.Fatal(err)
+	}
+	rows, err := sqlStatement.Query(getauthorIDcookie, searchtext) // need to figure out where to get text we are searching for
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for rows.Next(){
+		err = rows.Scan(&anote.NoteID, &anote.NoteText, &anote.AuthorID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		notes = append(notes, note)
+	}
+	json.NewEncoder(w).Encode(&notes) // need to add error functionality here
+
+}
+
+
