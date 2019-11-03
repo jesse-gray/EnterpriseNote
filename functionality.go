@@ -94,7 +94,12 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 
 	if validateUser(user.User_id){ //1st checks the user is valid
 		if checkPassword(userPassword.Pword) {		// 2nd checks the passwords match
-			// here we need to place cookie creation and the session info
+			userCookie, err := createCookie()
+			if err != nil {
+				panic(err)
+			}
+			attatchCookietoUser(user.User_id, userCookie)
+		
 			fmt.Printf("Log in was Successful")
 	}
 		else {
