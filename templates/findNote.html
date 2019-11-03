@@ -1,0 +1,27 @@
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container-fluid">
+            <h1 class="display-4">Find Note</h1>
+            <p class="lead">Her you can enter a search criteria and find all notes that it applies to.</p>
+        </div>
+    </div>
+    <div class="container-fluid">
+		<form id="findNoteForm">
+			<div class="form-group">
+				<label class="col-sm-6 col-form-label">Enter Search Term: </label>
+                <input type="text" class="form-control" id="searchterm" name="searchterm">
+			</div>
+			<button type="submit" class="btn btn-secondary">Submit</button>
+		</form>
+        <hr>
+        <div id="notesOutput"></div>
+        <div class="container-fluid">
+		    <button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
+        </div>
+	</div>
+</body>
