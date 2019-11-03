@@ -19,14 +19,16 @@
 					<input type="text" readonly class="form-control-plaintext" id="formnoteid" name="noteid" value="">
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group row">
 				<label class="col-sm-6 col-form-label">Enter Search Term: </label>
-                <input type="text" class="form-control" id="searchterm" name="searchterm">
+				<div class="col-sm-12">
+                    <input type="text" class="form-control" id="searchterm" name="searchterm">
+                </div>
 			</div>
 			<button type="submit" class="btn btn-secondary">Submit</button>
 		</form>
         <hr>
-        <div id="notesOutput"></div>
+        <div id="notesOutput" class="container-fluid"></div>
         <div class="container-fluid">
             <button id="backBtn" class="btn btn-secondary" onclick='location.href="viewNotes"'>Back</button>
 		    <button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
