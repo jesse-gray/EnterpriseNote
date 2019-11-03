@@ -87,7 +87,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	db := opendb()
 	defer db.Close()
 	sqlStatement := `DELETE FROM "user" WHERE user_id = $1`
-	_, err := db.Exec(sqlStatement, params["id"]) //@todo get author_id from cookie (currently logged on user)
+	_, err := db.Exec(sqlStatement, params["id"])
 	if err != nil {
 		panic(err)
 	}
@@ -95,12 +95,13 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 //Update a user
 func updateUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
 	var user User
 	_ = json.NewDecoder(r.Body).Decode(&user)
 	sqlStatement := `UPDATE "user" SET user_first_name = $1, user_last_name = $2, user_password = $3 WHERE user_id = $4`
-	_, err := db.Exec(sqlStatement, user.FirstName, user.LastName, user.Password, 1) //@todo get author_id from cookie (currently logged on user)
+	_, err := db.Exec(sqlStatement, user.FirstName, user.LastName, user.Password, params["id"])
 	if err != nil {
 		panic(err)
 	}
