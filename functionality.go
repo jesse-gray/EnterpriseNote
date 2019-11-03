@@ -35,15 +35,7 @@ func validateUser(user string) bool {
 
 // function to execute text search in SQL
 
-func searchSQL (body string, userID int) []Note {
-	var notes []Note
-	w http.ResponseWriter, r *http.Request
 
-	db := opendb()
-	defer db.Close()
-
-	sqlStatement := db.Prepare("SELECT note.note_id, note.note_text, note.author_id FROM LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) WHERE body")
-}
 
 function searchSQL(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
