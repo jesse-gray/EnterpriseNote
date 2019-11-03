@@ -20,6 +20,6 @@
         <button id="viewUsers" class="btn btn-secondary" onclick="location.href='viewUsers'" type="button">View Users</button><br><br>
         <button id="findNote" class="btn btn-secondary" onclick="location.href='findNote'" type="button">Find a Note</button>
         <button id="analyseNote" class="btn btn-secondary" onclick="location.href='analyseNote'" type="button">Analyse a Note</button><br><br>
-        <button id="logout" class="btn btn-secondary">Logout</button>
+        <button id="logout" class="btn btn-secondary" onclick="localStorage.setItem('currentlyloggedin', 0); location.replace('/api/')">Logout</button>
     </div>
 </body>

@@ -82,22 +82,10 @@ function updatePerms(noteID) {
     location.href = 'updatePerms';
 }
 
-//Login Form
-$('#loginForm').on('submit', function(event) {
-    event.preventDefault();
+function splashPageLoad() {
+    if (localStorage.getItem("currentlyloggedin") != 0) {
+        location.replace("/api/home")
+    }
+}
 
-    var userid = $('#userid').val()
-    var password = $('#password').val()
-    var json = JSON.stringify({ "userid": userid, "password": password })
-    console.log(json)
-    $.ajax({
-        type: 'POST',
-        url: 'http://localhost:8000/api/login',
-        dataType: 'json',
-        data: json,
-        contentType: 'application/json',
-        success: function(data) {
-            localStorage.setItem("currentlyloggedin", data)
-        }
-    });
-});
+//Login Form

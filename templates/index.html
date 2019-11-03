@@ -4,7 +4,7 @@
     <script src="/javascript/javascript.js"></script>
 </head>
 
-<body>
+<body onload="splashPageLoad()">
     <div class="jumbotron jumbotron-fluid">
         <div class="container-fluid">
             <h1 class="display-4">Enterprise Note</h1>
@@ -67,7 +67,7 @@
 </body>
 
 <script type="text/javascript">    
-{{/* $('#loginForm').on('submit', function(event) {
+$('#loginForm').on('submit', function(event) {
     event.preventDefault();
 
     var userid = $('#userid').val()
@@ -82,7 +82,10 @@
     contentType: 'application/json',
     success: function(data) {
       localStorage.setItem("currentlyloggedin", data)
+      if(data != 0){
+        location.replace("home")
+      }
     }
   });
-}); */}}
+});
 </script>
