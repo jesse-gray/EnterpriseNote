@@ -5,16 +5,6 @@ import (
 	"net/http"
 )
 
-//Index handler
-// func indexHandler(w http.ResponseWriter, r *http.Request) {
-// 	if /*User already logged on*/ {
-// 		t, _ := template.ParseFiles("main.html")
-// 	} else {
-// 		t, _ := template.ParseFiles("index.html")
-// 	}
-// 	t.Execute(w, nil)
-// }
-
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/index.html")
 	t.Execute(w, nil)
@@ -67,5 +57,10 @@ func updatePermsHandler(w http.ResponseWriter, r *http.Request) {
 
 func findNoteHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/findNote.html")
+	t.Execute(w, nil)
+}
+
+func analyseNoteHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/analyseNote.html")
 	t.Execute(w, nil)
 }

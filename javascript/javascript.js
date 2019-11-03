@@ -18,6 +18,7 @@ function loadNotes() {
 function processNotes(arr) {
     var yourOutput = "<h2>Your Notes</h2>";
     var shareOutput = "<h2>Notes that have been shared with you</h2>";
+    console.log(arr);
     for (var i = 0; i < arr.length; i++) {
         //Display extracted info into the divs
         if (arr[i].authorid == sessionStorage.getItem("currentlyloggedin")) {

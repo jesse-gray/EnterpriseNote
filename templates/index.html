@@ -34,7 +34,9 @@
         </form>
     </div>
     <hr>
-    <p>If you dont have an account, <a href="signUp">sign up here.</a></p>
+	<div class="container-fluid">
+        <p>If you dont have an account, <a href="signUp">sign up here.</a></p>
+    </div>
 </body>
 
 <script type="text/javascript">    
@@ -44,7 +46,6 @@ $('#loginForm').on('submit', function(event) {
     var userid = $('#userid').val()
     var password = $('#password').val()
     var json = JSON.stringify({"userid":userid, "password":password})
-    console.log(json)
   $.ajax({
     type: 'POST',
     url: 'http://localhost:8000/api/login',

@@ -24,6 +24,7 @@ func main() {
 	r.HandleFunc("/api/updateUser", updateUserHandler)
 	r.HandleFunc("/api/updatePerms", updatePermsHandler)
 	r.HandleFunc("/api/findNote", findNoteHandler)
+	r.HandleFunc("/api/analyseNote", analyseNoteHandler)
 	r.HandleFunc("/api/login", login).Methods("POST")
 	r.HandleFunc("/api/notes/{id}", getNotes).Methods("GET")
 	r.HandleFunc("/api/note/{id}/{user}", getNote).Methods("GET")
