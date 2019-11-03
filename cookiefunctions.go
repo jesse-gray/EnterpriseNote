@@ -4,9 +4,8 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
-
-	_ "github.com/lib/pq"
-	uuid "github.com/satori/go.uuid"
+	"github.com/lib/pq"
+	"github.com/satori/go.uuid"
 )
 
 // Use the uuid library to create 128 bit numbers for session id's, these will be unique
@@ -21,7 +20,7 @@ func createCookie() string {
 	return cookieID.String()
 }
 
-// function adds the session to the logged in user
+// function adds the session to the logged in user on the backend
 
 func attatchCookietoUser(cookieID string, user User) bool {
 	db := opendb()
@@ -36,4 +35,31 @@ func attatchCookietoUser(cookieID string, user User) bool {
 
 	// show success of cookie placement
 	return true
+}
+
+// function to remove the session id from the user when no longer logged in
+
+func removeCookieFromUser(w http.ResponseWriter, r *http.Request) {
+	// get cookieID
+	cookieID, err := r.Cookie("cookie_ID")
+
+	cookieID = &http.Cookie{
+		Name:	"session",
+		Value:	"",
+		Age:	-1,
+	}
+	// set cookie using http.Setcookie with cookie ID which is now blank
+	http.SetCookie(w, cookieID)
+}
+
+// a function to see if the user is logged in by getting the cookie
+func getCookie(r *http.Request) (cookieID string) {
+
+	cookieTracer, err := r.Cookie("cookie_id")
+	if err != nil {
+		cookieID = " "
+		return cookieID
+	}
+	cookieID = cookieTracer.Value
+	return cookieID
 }
