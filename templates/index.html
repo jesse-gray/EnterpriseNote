@@ -67,35 +67,22 @@
 </body>
 
 <script type="text/javascript">    
-/* $('#loginForm').on('submit', function(event) {
+{{/* $('#loginForm').on('submit', function(event) {
     event.preventDefault();
 
     var userid = $('#userid').val()
     var password = $('#password').val()
-
     var json = JSON.stringify({"userid":userid, "password":password})
     console.log(json)
   $.ajax({
-    type: 'GET',
+    type: 'POST',
     url: 'http://localhost:8000/api/login',
     dataType: 'json',
     data: json,
     contentType: 'application/json',
     success: function(data) {
-      alert(data)
+      localStorage.setItem("currentlyloggedin", data)
     }
   });
-var url = "http://localhost:8000/api/login";
-
-//Declare XMLHttpRequest Object
-var xmlhttp = new XMLHttpRequest();
-xmlhttp.open("GET", url, true);
-xmlhttp.send();
-xmlhttp.onreadystatechange = function() {
-    console.log(this.responseText)
-    if (this.readyState == 4 && this.status == 200) {
-        localStorage.setItem("loggedIn", this.responseText);
-    }
-};
-}); */
+}); */}}
 </script>

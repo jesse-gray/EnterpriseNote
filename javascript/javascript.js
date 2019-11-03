@@ -82,33 +82,22 @@ function updatePerms(noteID) {
     location.href = 'updatePerms';
 }
 
-// //Login
-// console.log("got here")
-// $('#loginForm').on('submit', function(event) {
-//     console.log("got here")
-//     event.preventDefault();
-//     const json = serialize_form(this);
-//     $.ajax({
-//         type: 'GET',
-//         url: 'http://localhost:8000/api/login',
-//         dataType: 'json',
-//         data: json,
-//         contentType: 'application/json',
-//         success: function(data) {
-//             alert(data)
-//         }
-//     });
-//     var url = "http://localhost:8000/api/login";
+//Login Form
+$('#loginForm').on('submit', function(event) {
+    event.preventDefault();
 
-//     //Declare XMLHttpRequest Object
-//     var xmlhttp = new XMLHttpRequest();
-//     xmlhttp.open("GET", url, true);
-//     xmlhttp.send();
-//     xmlhttp.onreadystatechange = function() {
-//         console.log(this.responseText)
-//         if (this.readyState == 4 && this.status == 200) {
-//             localStorage.setItem("loggedIn", this.responseText);
-//         }
-//     };
-
-// });
+    var userid = $('#userid').val()
+    var password = $('#password').val()
+    var json = JSON.stringify({ "userid": userid, "password": password })
+    console.log(json)
+    $.ajax({
+        type: 'POST',
+        url: 'http://localhost:8000/api/login',
+        dataType: 'json',
+        data: json,
+        contentType: 'application/json',
+        success: function(data) {
+            localStorage.setItem("currentlyloggedin", data)
+        }
+    });
+});
