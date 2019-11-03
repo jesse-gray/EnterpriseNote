@@ -64,7 +64,7 @@ function processUsers(arr) {
 
 //Page loads
 function splashPageLoad() {
-    if (sessionStorage.getItem("currentlyloggedin") != 0) {
+    if (sessionStorage.getItem("currentlyloggedin") != undefined) {
         location.replace("/api/home")
     }
 }
