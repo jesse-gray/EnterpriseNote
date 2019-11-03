@@ -79,7 +79,32 @@ func checkPassword (password string) bool {
 	return true
 }
 
-// no to use the above 2 functions to 
+// now to use the above 2 functions to allow a user to login to the application
+
+func secureLogin(w http.ResponseWriter, r *http.Request) {
+	var user User
+	var userPassword Pword
+	streamUser, err := ioutil.ReadAll(r.Body) // parsing data from a post request
+	if err != nil {
+		panic(err)
+	}
+
+	json.Unmarshal(streamUser, &user)	// unmarshal the data from the reader
+	json.Unmarshal(userPassword, &user)
+
+	if validateUser(user.User_id){ //1st checks the user is valid
+		if checkPassword(userPassword.Pword) {		// 2nd checks the passwords match
+			// here we need to place cookie creation and the session info
+			fmt.Printf("Log in was Successful")
+	}
+		else {
+			fmt.Printf("Log in failed, incorrect password")
+		}
+	}
+	else {
+		fmt.Printf("No such user exists")
+	}
+
 
 // function to execute text search in SQL
 
