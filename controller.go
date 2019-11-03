@@ -40,8 +40,13 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
-func updateHandler(w http.ResponseWriter, r *http.Request) {
+func updateNoteHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/updateNote.html")
+	t.Execute(w, nil)
+}
+
+func updateUserHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/updateUser.html")
 	t.Execute(w, nil)
 }
 

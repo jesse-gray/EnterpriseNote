@@ -18,10 +18,11 @@ type Note struct {
 //Get ALL notes
 func getNotes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
 	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id WHERE author_id = $1 OR (permissions.user_id = $1 AND permissions.read_permission = true)`
-	rows, err := db.Query(sqlStatement, 1) //@todo get author_id from cookie (currently logged on user)
+	rows, err := db.Query(sqlStatement, params["id"]) //@todo get author_id from cookie (currently logged on user)
 	if err != nil {
 		panic(err)
 	}

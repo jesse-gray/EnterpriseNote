@@ -4,17 +4,17 @@
     <script src="/javascript/javascript.js"></script>
 </head>
 
-<body onload="loadPage()">
+<body onload="loadUpdateNotePage()">
     <div class="jumbotron jumbotron-fluid">
   		<div class="container-fluid">
-			<h1 class="display-4">Update note</h1>
+			<h1 class="display-4">Update Note</h1>
 			<p class="lead">This is where you can update the details of a note.</p>
         </div>
     </div>
 	<div class="container-fluid">
-		<form id="updateForm">
+		<form id="updateNoteForm">
 			<div class="form-group row">
-				<label id="noteid" class="col-sm-2 col-form-label">Note ID: </label>
+				<label class="col-sm-2 col-form-label">Note ID: </label>
 				<div class="col-sm-10">
 					<input type="text" readonly class="form-control-plaintext" id="formnoteid" name="noteid" value="">
 				</div>
@@ -41,7 +41,7 @@
        .reduce((m, [ key, value ]) => Object.assign(m, { [key]: value }), {})
 );
 
-$('#updateForm').on('submit', function(event) {
+$('#updateNoteForm').on('submit', function(event) {
   event.preventDefault();
   const json = serialize_form(this);
   $.ajax({
@@ -54,5 +54,6 @@ $('#updateForm').on('submit', function(event) {
       alert(data)
     }
   });
+  location.href='viewNotes';
 });
 </script>
