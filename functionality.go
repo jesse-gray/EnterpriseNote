@@ -26,12 +26,60 @@ function opendbtest() *sql.DB {
 
 
 // function to check that entered username is valid must complete this
-func validateUser(user string) bool {
-	var user string
+func validateUser(userid int) bool {
+	var user int
 
 	db := opendb()
 	defer db.Close()
+
+	sqlStatement,err := db.Prepare("SELECT user_id FROM "user" WHERE user_id = $1;")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	exists = sqlStatement.QueryRow(userid).Scan(&user)
+	// if exists does not return a match of userid to the database then no user with this name exists
+
+	if exists == sql.ErrNoRows {
+		return false
+	}
+	if exists != nil {
+		log.Fatal(exists.Error())
+	}
+	return true
 }
+
+// function to check a password match may put this into pword.go
+func checkPassword (password string) bool {
+	var pword string
+
+	db := opendb()
+	defer db.Close()
+
+	// using sqlStatement to match use through code
+
+	sqlStatement := db.Prepare("SELECT pword FROM pasword WHERE userID = $1;")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = sqlStatement.QueryRow(password).Scan(&pword)
+
+	// if err == null ie nothing is returned from query, there is no matching password so yjrm er report false
+	if err == sql.ErrNoRows { 
+		return false
+	}
+	
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	// we have a match =)
+
+	return true
+}
+
+// no to use the above 2 functions to 
 
 // function to execute text search in SQL
 
