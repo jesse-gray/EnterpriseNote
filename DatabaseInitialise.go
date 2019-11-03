@@ -24,6 +24,7 @@ func contructDB() {
 		user_id					int					GENERATED ALWAYS AS IDENTITY,
 		user_first_name			varchar(25)			NOT NULL,
 		user_last_name			varchar(25),
+		cookie_id				varchar(100),
 		CONSTRAINT pk_user_id PRIMARY KEY (user_id)
 	)WITH ( 
 	  OIDS=FALSE 
