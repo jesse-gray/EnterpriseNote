@@ -1,6 +1,7 @@
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/javascript/javascript.js"></script>
 </head>
 
 <body>
@@ -10,51 +11,91 @@
             <p class="lead">A shared notebook application.</p>
         </div>
     </div>
-    <div class="container-fluid">
-        <div class="form-group row-fluid">
-            <h2>Login:</h2>
-        </div>
-        <div class="form-group row-fluid">
-            <label class="col-sm-2 col-form-label">User ID: </label>
-            <div class="col-sm-10">
-                <input id="userid" type="number">  
+	<div class="container-fluid">
+		<form id="loginForm">
+            <div class="form-group row-fluid">
+                <h2>Login:</h2>
             </div>
-        </div>
-        <div class="form-group row-fluid">
-            <label class="col-sm-2 col-form-label">Password: </label>
-            <div class="col-sm-10">
-                <input id="password" type="password">  
+            <div class="form-group row-fluid">
+                <label class="col-sm-2 col-form-label">User ID: </label>
+                <div class="col-sm-10">
+                    <input id="userid" type="number" name="userid">  
+                </div>
             </div>
-        </div>
-        <div class="form-group row-fluid">
-            <button class="btn btn-secondary" onclick="login()">Login</button> 
-        </div>   
+            <div class="form-group row-fluid">
+                <label class="col-sm-2 col-form-label">Password: </label>
+                <div class="col-sm-10">
+                    <input id="password" type="password" name="password">  
+                </div>
+            </div>
+            <div class="form-group row-fluid">
+                <button type="submit" class="btn btn-secondary">Login</button> 
+            </div>
+        </form>
     </div>
     <hr>
-    <div class="container-fluid">
-        <div class="form-group row-fluid">
-            <h2>Sign Up:</h2>
-        </div>
-        <div class="form-group row-fluid">
-            <label class="col-sm-2 col-form-label">First Name: </label>
-            <div class="col-sm-10">
-                <input id="firstname" type="text">  
+	<div class="container-fluid">
+		<form id="signupForm">
+            <div class="container-fluid">
+                <div class="form-group row-fluid">
+                    <h2>Sign Up:</h2>
+                </div>
+                <div class="form-group row-fluid">
+                    <label class="col-sm-2 col-form-label">First Name: </label>
+                    <div class="col-sm-10">
+                        <input id="firstname" type="text" name="firstname">  
+                    </div>
+                </div>
+                <div class="form-group row-fluid">
+                    <label class="col-sm-2 col-form-label">Last Name: </label>
+                    <div class="col-sm-10">
+                        <input id="lastname" type="text" name="lastname">  
+                    </div>
+                </div>
+                <div class="form-group row-fluid">
+                    <label class="col-sm-2 col-form-label">Password: </label>
+                    <div class="col-sm-10">
+                        <input id="signInPassword" type="password" name="signInPassword">  
+                    </div>   
+                </div>
+                <div class="form-group row-fluid">
+                    <button class="btn btn-secondary" onclick="signUp()">Sign Up</button> 
+                </div>
             </div>
-        </div>
-        <div class="form-group row-fluid">
-            <label class="col-sm-2 col-form-label">Last Name: </label>
-            <div class="col-sm-10">
-                <input id="lastname" type="text">  
-            </div>
-        </div>
-        <div class="form-group row-fluid">
-            <label class="col-sm-2 col-form-label">Password: </label>
-            <div class="col-sm-10">
-                <input id="signInPassword" type="password">  
-            </div>   
-        </div>
-        <div class="form-group row-fluid">
-            <button class="btn btn-secondary" onclick="signUp()">Sign Up</button> 
-        </div>
+        </form>
     </div>
 </body>
+
+<script type="text/javascript">    
+/* $('#loginForm').on('submit', function(event) {
+    event.preventDefault();
+
+    var userid = $('#userid').val()
+    var password = $('#password').val()
+
+    var json = JSON.stringify({"userid":userid, "password":password})
+    console.log(json)
+  $.ajax({
+    type: 'GET',
+    url: 'http://localhost:8000/api/login',
+    dataType: 'json',
+    data: json,
+    contentType: 'application/json',
+    success: function(data) {
+      alert(data)
+    }
+  });
+var url = "http://localhost:8000/api/login";
+
+//Declare XMLHttpRequest Object
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.open("GET", url, true);
+xmlhttp.send();
+xmlhttp.onreadystatechange = function() {
+    console.log(this.responseText)
+    if (this.readyState == 4 && this.status == 200) {
+        localStorage.setItem("loggedIn", this.responseText);
+    }
+};
+}); */
+</script>
