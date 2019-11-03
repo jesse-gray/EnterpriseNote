@@ -21,7 +21,7 @@ func getNotes(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
-	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id WHERE author_id = $1 OR (permissions.user_id = $1 AND permissions.read_permission = true)`
+	sqlStatement := `SELECT DISTINCT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id WHERE author_id = $1 OR (permissions.user_id = $1 AND permissions.read_permission = true)`
 	rows, err := db.Query(sqlStatement, params["id"])
 	if err != nil {
 		panic(err)
