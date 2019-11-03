@@ -43,7 +43,7 @@ $('#createForm').on('submit', function(event) {
   const json = serialize_form(this);
   $.ajax({
     type: 'POST',
-    url: 'http://localhost:8000/api/notes/' + localStorage.getItem("currentlyloggedin"),
+    url: 'http://localhost:8000/api/notes/' + sessionStorage.getItem("currentlyloggedin"),
     dataType: 'json',
     data: json,
     contentType: 'application/json',

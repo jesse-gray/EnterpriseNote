@@ -52,7 +52,7 @@ $('#updateUserForm').on('submit', function(event) {
   const json = serialize_form(this);
   $.ajax({
     type: 'PUT',
-    url: 'http://localhost:8000/api/users/' + localStorage.getItem("userid"),
+    url: 'http://localhost:8000/api/users/' + sessionStorage.getItem("userid"),
     dataType: 'json',
     data: json,
     contentType: 'application/json',
