@@ -20,6 +20,11 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
+func signUpHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/signUp.html")
+	t.Execute(w, nil)
+}
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/home.html")
 	t.Execute(w, nil)
@@ -37,6 +42,11 @@ func viewUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 func createHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/createNote.html")
+	t.Execute(w, nil)
+}
+
+func viewNoteHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/viewNote.html")
 	t.Execute(w, nil)
 }
 

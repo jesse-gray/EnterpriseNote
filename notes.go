@@ -51,7 +51,7 @@ func getNote(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id WHERE note.note_id = $1 AND (author_id = $2 OR (permissions.user_id = $2 AND permissions.read_permission = true))`
 	var note Note
-	row := db.QueryRow(sqlStatement, params["id"])
+	row := db.QueryRow(sqlStatement, params["id"], params["user"])
 	switch err := row.Scan(&note.NoteID, &note.NoteText, &note.AuthorID); err {
 	case sql.ErrNoRows:
 		json.NewEncoder(w).Encode(&note)

@@ -38,12 +38,39 @@ CREATE TABLE permissions (
 
 --Mock Data
 INSERT INTO "user" (user_first_name, user_last_name, user_password)
-VALUES 	('John', 'Smith', 'password'),
+VALUES 	('John', 'Acers', 'password'),
+		('James', 'Greene', 'password'),
+		('Tony', 'Hions', 'password'),
+		('Charlotte', 'Huffing', 'password'),
+		('Tim', 'Odens', 'password'),
 		('Sharon', 'Tomkins', 'password');
 		
 INSERT INTO note (note_text, author_id)
 VALUES 	('This is sample text for the first note', 1),
-		('This is some more sample text, however this is for the second note', 2);
+		('This is some more sample text, however this is for the second note', 2),
+		('More text for more notes', 4),
+		('Random words for another note', 3),
+		('Small note', 6),
+		('Its hard to make fake notes', 3),
+		('Is this the last note?', 5),
+		('it was not, but perhaps this one is.', 1);
 		
 INSERT INTO permissions
-VALUES 	(2, 1, true, false);
+VALUES 	(2, 1, true, false),
+		(2, 3, true, true),
+		(2, 4, true, false),
+		(3, 1, true, true),
+		(4, 1, true, false),
+		(4, 6, true, false),
+		(5, 1, true, false),
+		(5, 2, true, true),
+		(5, 3, true, false),
+		(5, 4, true, false),
+		(5, 5, true, true),
+		(6, 2, true, false),
+		(6, 4, true, false),
+		(7, 6, true, false),
+		(7, 2, true, false),
+		(7, 3, true, true),
+		(8, 3, true, false),
+		(8, 5, true, true);

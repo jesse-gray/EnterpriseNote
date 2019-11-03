@@ -1,0 +1,21 @@
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/javascript/javascript.js"></script>
+</head>
+
+<body onload="loadNote()">
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container-fluid">
+            <h1 class="display-4">View Note</h1>
+            <p class="lead">Here are the details for the note.</p>
+        </div>
+    </div>
+    <div id="noteDetail" class="container-fluid">
+    </div>
+    <hr>
+    <div class="container-fluid">
+        <button id="backBtn" class="btn btn-secondary" onclick='location.href="viewNotes"'>Back</button>
+        <button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
+    </div>
+</body>

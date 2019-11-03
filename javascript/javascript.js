@@ -21,9 +21,9 @@ function processNotes(arr) {
     for (var i = 0; i < arr.length; i++) {
         //Display extracted article into the divs
         if (arr[i].authorid == localStorage.getItem("currentlyloggedin")) {
-            yourOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3>NoteID: ' + arr[i].noteid + '</h3><p class="card-text">Note Text: ' + arr[i].notetext + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="deleteButton" value="' + arr[i].noteid + '" onclick="deleteNote(this.value)" type="button">Delete</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updatePerms" value="' + arr[i].noteid + '" onclick="updatePerms(this.value)" type="button">Update Permissions</button></div></div></div></div></div>';
+            yourOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3>Note ID: ' + arr[i].noteid + '</h3><p class="card-text">Note Text: ' + arr[i].notetext + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="viewBtn" value="' + arr[i].noteid + '" onclick="viewNote(this.value)" type="button">View</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="deleteButton" value="' + arr[i].noteid + '" onclick="deleteNote(this.value)" type="button">Delete</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updatePerms" value="' + arr[i].noteid + '" onclick="updatePerms(this.value)" type="button">Update Permissions</button></div></div></div></div></div>';
         } else {
-            shareOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3 class="card-title">NoteID: ' + arr[i].noteid + '</h3><p class="card-text">Note Text: ' + arr[i].notetext + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button></div></div></div></div></div>';
+            shareOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3 class="card-title">Note ID: ' + arr[i].noteid + '</h3><p class="card-text">Note Text: ' + arr[i].notetext + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="viewBtn" value="' + arr[i].noteid + '" onclick="viewNote(this.value)" type="button">View</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button></div></div></div></div></div>';
         }
     }
     document.getElementById("yourNotes").innerHTML = yourOutput;
@@ -54,7 +54,7 @@ function processUsers(arr) {
     for (var i = 0; i < arr.length; i++) {
         //Display extracted article into the divs
         if (arr[i].userid == localStorage.getItem("currentlyloggedin")) {
-            profileOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h5 class="card-title">User ID: ' + arr[i].userid + '</h5><p class="card-text">Name: ' + arr[i].firstname + ' ' + arr[i].lastname + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].userid + '" onclick="updateUser(this.value)" type="button">Update</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="deleteButton" value="' + arr[i].userid + '" onclick="deleteUser(this.value)" type="button">Delete</button></div></div></div></div>';
+            profileOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3 class="card-title">User ID: ' + arr[i].userid + '</h3><p class="card-text">Name: ' + arr[i].firstname + ' ' + arr[i].lastname + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].userid + '" onclick="updateUser(this.value)" type="button">Update</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="deleteButton" value="' + arr[i].userid + '" onclick="deleteUser(this.value)" type="button">Delete</button></div></div></div></div>';
         } else {
             userOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><h5 class="card-title">User ID: ' + arr[i].userid + '</h5><p class="card-text">Name: ' + arr[i].firstname + ' ' + arr[i].lastname + '</p></div></div></div>';
         }
@@ -77,6 +77,25 @@ function loadUpdatePermissionPage() {
 }
 
 //Notes
+function viewNote(noteID) {
+    localStorage.setItem("noteid", noteID)
+    location.href = 'viewNote';
+}
+
+function loadNote() {
+    var url = "http://localhost:8000/api/note/" + localStorage.getItem("noteid") + "/" + localStorage.getItem("currentlyloggedin");
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var note = JSON.parse(this.responseText);
+            var output = '<div class="card text-white bg-secondary mb-3"><div class="card-body"><h3 class="card-title">Note ID: ' + note.noteid + '</h3><p class="card-text">Note Text: ' + note.notetext + '</p><p class="card-text">Author ID: ' + note.authorid + '</p></div></div>';
+            document.getElementById("noteDetail").innerHTML = output;
+        }
+    }
+}
+
 function updateNote(noteID) {
     localStorage.setItem("noteid", noteID)
     location.href = 'updateNote';

@@ -36,11 +36,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Sign Up
-func signUp(w http.ResponseWriter, r *http.Request) {
-
-}
-
 //Get ALL users
 func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -74,7 +69,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&newUser)
 	db := opendb()
 	defer db.Close()
-	sqlStatement := `INSERT INTO "user" (user_first_name, user_last_name, user_password) VALUES ($1, $2 $3)`
+	sqlStatement := `INSERT INTO "user" (user_first_name, user_last_name, user_password) VALUES ($1, $2, $3)`
 	_, err := db.Exec(sqlStatement, newUser.FirstName, newUser.LastName, newUser.Password)
 	if err != nil {
 		panic(err)
