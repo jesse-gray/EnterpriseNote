@@ -33,7 +33,7 @@ func validateUser(userid string) bool {
 	db := opendb()
 	defer db.Close()
 
-	sqlStatement, err := db.Prepare("SELECT user_id FROM 'user' WHERE user_id = $1;")
+	sqlStatement, err := db.Prepare("SELECT user_id FROM \"user\" WHERE user_id = $1;")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,7 +51,7 @@ func validateUser(userid string) bool {
 }
 
 // function to check a password match may put this into pword.go
-func checkPassword(password string) bool {
+func checkPassword(toCheck User) bool {
 	var pword string
 
 	db := opendb()
@@ -59,12 +59,12 @@ func checkPassword(password string) bool {
 
 	// using sqlStatement to match use through code
 
-	sqlStatement, err := db.Prepare("SELECT user_password FROM 'user' WHERE user_id = $1;")
+	sqlStatement, err := db.Prepare("SELECT user_password FROM \"user\" WHERE user_id = $1 AND user_password = $2;")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = sqlStatement.QueryRow(password).Scan(&pword)
+	err = sqlStatement.QueryRow(toCheck.UserID, toCheck.Password).Scan(&pword)
 
 	// if err == null ie nothing is returned from query, there is no matching password so yjrm er report false
 	if err == sql.ErrNoRows {
@@ -94,7 +94,7 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 	// json.Unmarshal(userPassword, &user)
 
 	if validateUser(user.UserID) { //1st checks the user is valid
-		if checkPassword(user.Password) { // 2nd checks the passwords match
+		if checkPassword(user) { // 2nd checks the passwords match
 			CookieID := createCookie()
 			if err != nil {
 				panic(err)

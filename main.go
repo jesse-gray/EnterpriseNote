@@ -27,7 +27,7 @@ func main() {
 	r.HandleFunc("/api/findNote", findNoteHandler)
 	r.HandleFunc("/api/analyseNote", analyseNoteHandler)
 	//API routing
-	r.HandleFunc("/api/login", login).Methods("POST")
+	r.HandleFunc("/api/login", secureLogin).Methods("POST")
 	r.HandleFunc("/api/notes/{id}", getNotes).Methods("GET")
 	r.HandleFunc("/api/note/{id}/{user}", getNote).Methods("GET")
 	r.HandleFunc("/api/notes/{id}/{bool}", createNote).Methods("POST")

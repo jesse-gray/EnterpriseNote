@@ -26,7 +26,7 @@ func attatchCookietoUser(cookieID string, user User) bool {
 	defer db.Close()
 
 	// add cookie to database to show user is logged in
-	sqlStatement, err := db.Prepare("UPDATE 'user' SET cookie_id = $1 WHERE user_id = $2;")
+	sqlStatement, err := db.Prepare("UPDATE \"user\" SET cookie_id = $1 WHERE user_id = $2;")
 	if err != nil {
 		panic(err)
 	}
