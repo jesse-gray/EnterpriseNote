@@ -13,8 +13,7 @@ import (
 // function to create the cookie uses the uuid library to give it a unique id, based on time stamp and MAC address
 
 func createCookie() string {
-	uuid.Init()
-	cookieID, err := uuid.NewV1()
+	cookieID, _ := uuid.NewV4()
 	// testing fmt.Printf("version %d variant %d: %d\n", u1.Version(), u1.Variant(), u1)
 	// return id for use
 	return cookieID.String()
@@ -41,12 +40,11 @@ func attatchCookietoUser(cookieID string, user User) bool {
 
 func removeCookieFromUser(w http.ResponseWriter, r *http.Request) {
 	// get cookieID
-	cookieID, err := r.Cookie("_cookie")
+	cookieID, _ := r.Cookie("_cookie")
 	// set cookie value empty
 	cookieID = &http.Cookie{
 		Name:  "_cookie",
 		Value: "",
-		Age:   -1,
 	}
 	// set cookie using http.Setcookie with cookie ID which is now blank
 	http.SetCookie(w, cookieID)
@@ -73,20 +71,19 @@ func deleteCookie(w http.ResponseWriter, r *http.Request) {
 	cookieID = &http.Cookie{
 		Name:  "_cookie",
 		Value: "",
-		Age:   -1,
 	}
 	http.SetCookie(w, cookieID) // sets cookie value on client header to empty
 }
 
 // function to return userID if using cookieID
 
-func findUserID(req *http.Request) (user_id int) {
+func findUserID(req *http.Request) (userID int) {
 	db := opendb()
 	defer db.Close()
 	// get the cookieID
 	cookieTracer, err := req.Cookie("_cookie")
 	if err != nil { // if error occurs return nothing as ID
-		cookieTracer = cookieID
+		cookieTracer = nil
 	}
 	cookieID := cookieTracer.Value
 	// sql search of user table for matching cookie
@@ -96,17 +93,17 @@ func findUserID(req *http.Request) (user_id int) {
 		panic(err)
 	}
 	for rows.Next() {
-		err = rows.Scan(&user_id)
+		err = rows.Scan(&userID)
 		if err != nil {
 			panic(err)
 		}
 	}
-	return user_id
+	return userID
 }
 
 func isUseridLoggedIn(req *http.Request) bool {
 
-	var user_id int
+	var userID int
 	cookieID, err := req.Cookie("_cookie")
 	if err != nil {
 		return false //user is not logged in
@@ -118,8 +115,8 @@ func isUseridLoggedIn(req *http.Request) bool {
 	sqlStatement := `SELECT user_id FROM "user" WHERE cookie_id=$1`
 
 	// if no rows match
-	row = db.QueryRow(sqlStatement, cookieID.Value) // pull user id row
-	switch err := row.Scan(&user_id); err {
+	row := db.QueryRow(sqlStatement, cookieID.Value) // pull user id row
+	switch err := row.Scan(&userID); err {
 	case sql.ErrNoRows:
 		return false // no matches user not logged in
 	case nil:
