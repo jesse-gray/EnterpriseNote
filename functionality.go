@@ -7,8 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 // function to open database from jesse's code for testing
@@ -122,7 +120,7 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 
 func searchSQL(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
+	//params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
 	var notes []Note
