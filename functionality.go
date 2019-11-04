@@ -103,7 +103,7 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 
 			userCookie := &http.Cookie{ //creating the cookie for the user_id
 				Name:  "user_id",
-				Value: user.UserID,
+				Value: CookieID,
 			}
 			// set the cookie on client
 			http.SetCookie(w, userCookie)
