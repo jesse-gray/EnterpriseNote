@@ -94,20 +94,26 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 
 	if validateUser(user.User_id){ //1st checks the user is valid
 		if checkPassword(userPassword.Pword) {		// 2nd checks the passwords match
-			userCookie, err := createCookie()
+			CookieID, err := createCookie()
 			if err != nil {
 				panic(err)
 			}
-			attatchCookietoUser(user.User_id, userCookie)
-		
-			fmt.Printf("Log in was Successful")
+			attatchCookietoUser(user.User_id, CookieID) // sets cookie to db
+			
+			userCookie := &http.Cookie { //creating the cookie for the user_id
+				Name: "user_id",
+				Value: user.User_id,
+			}
+			// set the cookie on client
+			http.SetCookie(w, userCookie)
+			fmt.Printf("Log in was Successful") // console use only
 	}
 		else {
-			fmt.Printf("Log in failed, incorrect password")
+			fmt.Printf("Log in failed, incorrect password") // console use only
 		}
 	}
 	else {
-		fmt.Printf("No such user exists")
+		fmt.Printf("No such user exists") // need to replace with http message to interact with front end
 	}
 
 

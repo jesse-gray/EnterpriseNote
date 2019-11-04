@@ -4,8 +4,9 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
-	"github.com/lib/pq"
-	"github.com/satori/go.uuid"
+
+	_ "github.com/lib/pq"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Use the uuid library to create 128 bit numbers for session id's, these will be unique
@@ -41,10 +42,10 @@ func attatchCookietoUser(cookieID string, user User) bool {
 
 func removeCookieFromUser(w http.ResponseWriter, r *http.Request) {
 	// get cookieID
-	cookieID, err := r.Cookie("cookie_ID")
-
+	cookieID, err := r.Cookie("_cookie")
+	// set cookie value empty
 	cookieID = &http.Cookie{
-		Name:	"session",
+		Name:	"_cookie",
 		Value:	"",
 		Age:	-1,
 	}
@@ -55,12 +56,84 @@ func removeCookieFromUser(w http.ResponseWriter, r *http.Request) {
 // a function to see if the user is logged in by getting the cookie
 func getCookie(r *http.Request) (cookieID string) {
 
-	cookieTracer, err := r.Cookie("cookie_id")
-	if err != nil {
+	cookieTracer, err := r.Cookie("_cookie")
+	if err != nil {		// if error occurs return nothing as ID
 		cookieID = " "
 		return cookieID
 	}
-	cookieID = cookieTracer.Value
+	cookieID = cookieTracer.Value	// return cookie from function on successful read
 	return cookieID
 }
+
+// a function to remove cookie from client (to use in secure logout function)
+func deleteCookie(w http.ResponseWriter, r *http.Request) {
+	cookieID, _ := r.Cookie("_cookie")
+	
+	// reads the cookie
+	// set cookie value empty
+	cookieID = &http.Cookie{
+		Name: "_cookie"
+		Value: "",
+		Age: -1,
+	}
+	http.SetCookie(w, cookieID) // sets cookie value on client header to empty
+}
+
+// function to return userID if using cookieID
+
+func findUserID(req *http.Request) (user_id int) {
+	db := opendb()
+	defer db.Close()
+	// get the cookieID
+	cookieTracer, err := r.Cookie("_cookie")
+	if err != nil {		// if error occurs return nothing as ID
+		cookieTracer = cookieID
+	}
+	cookieID := cookieTracer.Value
+	// sql search of user table for matching cookie
+	sqlStatement := `SELECT user_id FROM "user" WHERE cookie_id=$1`
+	rows, err := db.Query(sqlStatement, cookieID)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		err = rows.Scan(&user_id)
+		if err!=nil{
+			panic(err)
+		}
+	}
+	return user_id
+}
+
+func isUseridLoggedIn(req *http.Request) bool {
+	
+	var user_id int
+	cookieID, err := req.Cookie("_cookie")
+	if err != nil {
+		return false //user is not logged in
+	}
+
+	db := opendb()
+	defer db.Close()
+	// statement to pull userid where cookies match
+	sqlStatement := `SELECT user_id FROM "user" WHERE cookie_id=$1`
+
+	// if no rows match
+	row = db.QueryRow(sqlStatement, cookieID.Value) // pull user id row
+	switch err := row.Scan(&user_id); err {
+	case sql.ErrNoRows:
+		return false // no matches user not logged in
+	case nil:
+		return true // a match user is logged in
+	default:
+		panic(err)
+	}
+}
+
+	// think that is all the cookie functionality we need
+	// use the isUseridLoggedIn function for security checks before  user can do anything, ie put a if statement before edit view notes etc
+	// also added below function to log out to be added to users
+
+
+
 
