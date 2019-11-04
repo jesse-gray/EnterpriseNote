@@ -5,18 +5,13 @@ import (
 	"net/http"
 )
 
-//Index handler
-// func indexHandler(w http.ResponseWriter, r *http.Request) {
-// 	if /*User already logged on*/ {
-// 		t, _ := template.ParseFiles("main.html")
-// 	} else {
-// 		t, _ := template.ParseFiles("index.html")
-// 	}
-// 	t.Execute(w, nil)
-// }
-
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/index.html")
+	t.Execute(w, nil)
+}
+
+func signUpHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/signUp.html")
 	t.Execute(w, nil)
 }
 
@@ -40,8 +35,18 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
-func updateHandler(w http.ResponseWriter, r *http.Request) {
+func viewNoteHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/viewNote.html")
+	t.Execute(w, nil)
+}
+
+func updateNoteHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/updateNote.html")
+	t.Execute(w, nil)
+}
+
+func updateUserHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/updateUser.html")
 	t.Execute(w, nil)
 }
 
@@ -52,5 +57,10 @@ func updatePermsHandler(w http.ResponseWriter, r *http.Request) {
 
 func findNoteHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/findNote.html")
+	t.Execute(w, nil)
+}
+
+func analyseNoteHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/analyseNote.html")
 	t.Execute(w, nil)
 }

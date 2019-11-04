@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 //Permission Struct
@@ -41,5 +43,19 @@ func updatePermission(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
+	}
+}
+
+//Use saved permissions
+func applyFavouritePermissions(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var note Note
+	_ = json.NewDecoder(r.Body).Decode(&note)
+	db := opendb()
+	defer db.Close()
+	sqlStatement := `INSERT INTO note (note_text, author_id) VALUES ($1, $2)`
+	_, err := db.Exec(sqlStatement, note.NoteText, params["id"])
+	if err != nil {
+		panic(err)
 	}
 }

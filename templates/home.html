@@ -11,7 +11,7 @@
         </div>
     </div>
     <div class="container-fluid">
-        <p>Welcome, {{ .firstName}}, what would you like to do?</p>
+        <p>Welcome to the shared note, what would you like to do?</p>
     </div>
     <hr>
     <div id="buttons" class="container-fluid">
@@ -20,6 +20,6 @@
         <button id="viewUsers" class="btn btn-secondary" onclick="location.href='viewUsers'" type="button">View Users</button><br><br>
         <button id="findNote" class="btn btn-secondary" onclick="location.href='findNote'" type="button">Find a Note</button>
         <button id="analyseNote" class="btn btn-secondary" onclick="location.href='analyseNote'" type="button">Analyse a Note</button><br><br>
-        <button id="logout" class="btn btn-secondary">Logout</button>
+        <button id="logout" class="btn btn-secondary" onclick="sessionStorage.removeItem('currentlyloggedin'); location.replace('/api/')">Logout</button>
     </div>
 </body>
