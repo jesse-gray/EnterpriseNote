@@ -138,6 +138,7 @@ func isUseridLoggedIn(req *http.Request) bool {
 	func logout(w http.ResponseWriter, r *http.Request) {
 		if isUseridLoggedIn(r) {
 			deleteCookie(w, r)
+			removeCookieFromUser(w, r)
 			//fmt.printf(w, "Successfully logged out") console use only
 			
 		} else {
