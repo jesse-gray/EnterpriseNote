@@ -1,43 +1,46 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 // function to open database from jesse's code for testing
 
-function opendbtest() *sql.DB {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-	return db
-}
-
-
-
+// function opendbtest() *sql.DB {
+// 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+// 		"password=%s dbname=%s sslmode=disable",
+// 		host, port, user, password, dbname)
+// 	db, err := sql.Open("postgres", psqlInfo)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	err = db.Ping()
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	return db
+// }
 
 // function to check that entered username is valid must complete this
-func validateUser(userid int) bool {
+func validateUser(userid string) bool {
 	var user int
 
 	db := opendb()
 	defer db.Close()
 
-	sqlStatement,err := db.Prepare("SELECT user_id FROM "user" WHERE user_id = $1;")
+	sqlStatement, err := db.Prepare("SELECT user_id FROM 'user' WHERE user_id = $1;")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	exists = sqlStatement.QueryRow(userid).Scan(&user)
+	exists := sqlStatement.QueryRow(userid).Scan(&user)
 	// if exists does not return a match of userid to the database then no user with this name exists
 
 	if exists == sql.ErrNoRows {
@@ -50,7 +53,7 @@ func validateUser(userid int) bool {
 }
 
 // function to check a password match may put this into pword.go
-func checkPassword (password string) bool {
+func checkPassword(password string) bool {
 	var pword string
 
 	db := opendb()
@@ -58,7 +61,7 @@ func checkPassword (password string) bool {
 
 	// using sqlStatement to match use through code
 
-	sqlStatement := db.Prepare("SELECT pword FROM pasword WHERE userID = $1;")
+	sqlStatement, err := db.Prepare("SELECT user_password FROM 'user' WHERE user_id = $1;")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,11 +69,11 @@ func checkPassword (password string) bool {
 	err = sqlStatement.QueryRow(password).Scan(&pword)
 
 	// if err == null ie nothing is returned from query, there is no matching password so yjrm er report false
-	if err == sql.ErrNoRows { 
+	if err == sql.ErrNoRows {
 		return false
 	}
-	
-	if err != nil{
+
+	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -83,62 +86,58 @@ func checkPassword (password string) bool {
 
 func secureLogin(w http.ResponseWriter, r *http.Request) {
 	var user User
-	var userPassword Pword
+	// var userPassword Pword
 	streamUser, err := ioutil.ReadAll(r.Body) // parsing data from a post request
 	if err != nil {
 		panic(err)
 	}
 
-	json.Unmarshal(streamUser, &user)	// unmarshal the data from the reader
-	json.Unmarshal(userPassword, &user)
+	json.Unmarshal(streamUser, &user) // unmarshal the data from the reader
+	// json.Unmarshal(userPassword, &user)
 
-	if validateUser(user.User_id){ //1st checks the user is valid
-		if checkPassword(userPassword.Pword) {		// 2nd checks the passwords match
-			CookieID, err := createCookie()
+	if validateUser(user.UserID) { //1st checks the user is valid
+		if checkPassword(user.Password) { // 2nd checks the passwords match
+			CookieID := createCookie()
 			if err != nil {
 				panic(err)
 			}
-			attatchCookietoUser(user.User_id, CookieID) // sets cookie to db
-			
-			userCookie := &http.Cookie { //creating the cookie for the user_id
-				Name: "user_id",
-				Value: user.User_id,
+			attatchCookietoUser(CookieID, user) // sets cookie to db
+
+			userCookie := &http.Cookie{ //creating the cookie for the user_id
+				Name:  "user_id",
+				Value: user.UserID,
 			}
 			// set the cookie on client
 			http.SetCookie(w, userCookie)
 			fmt.Printf("Log in was Successful") // console use only
-	}
-		else {
+		} else {
 			fmt.Printf("Log in failed, incorrect password") // console use only
 		}
-	}
-	else {
+	} else {
 		fmt.Printf("No such user exists") // need to replace with http message to interact with front end
 	}
-
+}
 
 // function to execute text search in SQL
 
-
-
-function searchSQL(w http.ResponseWriter, r *http.Request){
+func searchSQL(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
 	var notes []Note
-	var anote Note
-	sqlStatement := db.Prepare("SELECT note.note_id, note.note_text, note.author_id FROM note LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) WHERE note_text ~ $2 AND note.author_id = $1 OR (permissions.user_id = $1 AND (permissions.read_permission = TRUE))")
+	var note Note
+	sqlStatement, err := db.Prepare("SELECT note.note_id, note.note_text, note.author_id FROM note LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) WHERE note_text ~ $2 AND note.author_id = $1 OR (permissions.user_id = $1 AND (permissions.read_permission = TRUE))")
 	if err != nil {
 		log.Fatal(err)
 	}
-	rows, err := sqlStatement.Query(getauthorIDcookie, searchtext) // need to figure out where to get text we are searching for
+	rows, err := sqlStatement.Query(1, "sample") // need to figure out where to get text we are searching for
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for rows.Next(){
-		err = rows.Scan(&anote.NoteID, &anote.NoteText, &anote.AuthorID)
+	for rows.Next() {
+		err = rows.Scan(&note.NoteID, &note.NoteText, &note.AuthorID)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -146,5 +145,3 @@ function searchSQL(w http.ResponseWriter, r *http.Request){
 	}
 	json.NewEncoder(w).Encode(&notes) // need to add error functionality here
 }
-
-

@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 
 	_ "github.com/lib/pq"
@@ -15,7 +14,7 @@ import (
 
 func createCookie() string {
 	uuid.Init()
-	cookieID := uuid.NewV1()
+	cookieID, err := uuid.NewV1()
 	// testing fmt.Printf("version %d variant %d: %d\n", u1.Version(), u1.Variant(), u1)
 	// return id for use
 	return cookieID.String()
@@ -28,7 +27,7 @@ func attatchCookietoUser(cookieID string, user User) bool {
 	defer db.Close()
 
 	// add cookie to database to show user is logged in
-	sqlStatement, err := db.Prepare("UPDATE "user" SET cookie_id = $1 WHERE user_id = $2;")
+	sqlStatement, err := db.Prepare("UPDATE 'user' SET cookie_id = $1 WHERE user_id = $2;")
 	if err != nil {
 		panic(err)
 	}
@@ -45,9 +44,9 @@ func removeCookieFromUser(w http.ResponseWriter, r *http.Request) {
 	cookieID, err := r.Cookie("_cookie")
 	// set cookie value empty
 	cookieID = &http.Cookie{
-		Name:	"_cookie",
-		Value:	"",
-		Age:	-1,
+		Name:  "_cookie",
+		Value: "",
+		Age:   -1,
 	}
 	// set cookie using http.Setcookie with cookie ID which is now blank
 	http.SetCookie(w, cookieID)
@@ -57,24 +56,24 @@ func removeCookieFromUser(w http.ResponseWriter, r *http.Request) {
 func getCookie(r *http.Request) (cookieID string) {
 
 	cookieTracer, err := r.Cookie("_cookie")
-	if err != nil {		// if error occurs return nothing as ID
+	if err != nil { // if error occurs return nothing as ID
 		cookieID = " "
 		return cookieID
 	}
-	cookieID = cookieTracer.Value	// return cookie from function on successful read
+	cookieID = cookieTracer.Value // return cookie from function on successful read
 	return cookieID
 }
 
 // a function to remove cookie from client (to use in secure logout function)
 func deleteCookie(w http.ResponseWriter, r *http.Request) {
 	cookieID, _ := r.Cookie("_cookie")
-	
+
 	// reads the cookie
 	// set cookie value empty
 	cookieID = &http.Cookie{
-		Name: "_cookie"
+		Name:  "_cookie",
 		Value: "",
-		Age: -1,
+		Age:   -1,
 	}
 	http.SetCookie(w, cookieID) // sets cookie value on client header to empty
 }
@@ -85,8 +84,8 @@ func findUserID(req *http.Request) (user_id int) {
 	db := opendb()
 	defer db.Close()
 	// get the cookieID
-	cookieTracer, err := r.Cookie("_cookie")
-	if err != nil {		// if error occurs return nothing as ID
+	cookieTracer, err := req.Cookie("_cookie")
+	if err != nil { // if error occurs return nothing as ID
 		cookieTracer = cookieID
 	}
 	cookieID := cookieTracer.Value
@@ -98,7 +97,7 @@ func findUserID(req *http.Request) (user_id int) {
 	}
 	for rows.Next() {
 		err = rows.Scan(&user_id)
-		if err!=nil{
+		if err != nil {
 			panic(err)
 		}
 	}
@@ -106,7 +105,7 @@ func findUserID(req *http.Request) (user_id int) {
 }
 
 func isUseridLoggedIn(req *http.Request) bool {
-	
+
 	var user_id int
 	cookieID, err := req.Cookie("_cookie")
 	if err != nil {
@@ -130,20 +129,18 @@ func isUseridLoggedIn(req *http.Request) bool {
 	}
 }
 
-	// think that is all the cookie functionality we need
-	// use the isUseridLoggedIn function for security checks before  user can do anything, ie put a if statement before edit view notes etc
-	// also added below function to log out to be added to users
+// think that is all the cookie functionality we need
+// use the isUseridLoggedIn function for security checks before  user can do anything, ie put a if statement before edit view notes etc
+// also added below function to log out to be added to users
 
+func logout(w http.ResponseWriter, r *http.Request) {
+	if isUseridLoggedIn(r) {
+		deleteCookie(w, r)
+		//fmt.printf(w, "Successfully logged out") console use only
 
-	func logout(w http.ResponseWriter, r *http.Request) {
-		if isUseridLoggedIn(r) {
-			deleteCookie(w, r)
-			//fmt.printf(w, "Successfully logged out") console use only
-			
-		} else {
-			//fmt.printf(w, "Already logged out") console use only
-			
-		}
-	
+	} else {
+		//fmt.printf(w, "Already logged out") console use only
+
 	}
 
+}

@@ -85,7 +85,7 @@ func contructDB() {
 	VAlUES 	(1, 'password'),
 			(2, 'password');`
 
-	_, err := db.Exec(_data)
+	_, err = db.Exec(_data)
 	if err != nil {
 		log.Fatal()
 	}
