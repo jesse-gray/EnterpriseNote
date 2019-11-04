@@ -74,6 +74,20 @@ func createNote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+
+	//favourites query
+	if params["bool"] == "true" {
+		var noteID string
+
+		sqlStatement := `SELECT MAX(note_id) FROM note`
+		err := db.QueryRow(sqlStatement).Scan(&noteID)
+
+		sqlStatement = `INSERT INTO permissions SELECT $1 AS note_id, favourite_id, read_permission, write_permission FROM favourites WHERE author_id = $2`
+		_, err = db.Exec(sqlStatement, noteID, params["id"])
+		if err != nil {
+			panic(err)
+		}
+	}
 }
 
 //Delete a note

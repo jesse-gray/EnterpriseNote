@@ -13,6 +13,7 @@ func main() {
 	r := mux.NewRouter()
 
 	//Route handlers
+	//Web app routing
 	r.HandleFunc("/api/", indexHandler)
 	r.HandleFunc("/api/signUp", signUpHandler)
 	r.HandleFunc("/api/home", homeHandler)
@@ -25,10 +26,11 @@ func main() {
 	r.HandleFunc("/api/updatePerms", updatePermsHandler)
 	r.HandleFunc("/api/findNote", findNoteHandler)
 	r.HandleFunc("/api/analyseNote", analyseNoteHandler)
+	//API routing
 	r.HandleFunc("/api/login", login).Methods("POST")
 	r.HandleFunc("/api/notes/{id}", getNotes).Methods("GET")
 	r.HandleFunc("/api/note/{id}/{user}", getNote).Methods("GET")
-	r.HandleFunc("/api/notes/{id}", createNote).Methods("POST")
+	r.HandleFunc("/api/notes/{id}/{bool}", createNote).Methods("POST")
 	r.HandleFunc("/api/notes/{id}", updateNote).Methods("PUT")
 	r.HandleFunc("/api/notes/{id}", deleteNote).Methods("DELETE")
 	r.HandleFunc("/api/users", getUsers).Methods("GET")

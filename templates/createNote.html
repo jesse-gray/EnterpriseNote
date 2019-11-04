@@ -41,20 +41,24 @@
 $('#createForm').on('submit', function(event) {
   event.preventDefault();
   const json = serialize_form(this);
+
+  if($('#savedOption').is(':checked')){
+	  x = sessionStorage.getItem("currentlyloggedin") + "/true"
+  } else {
+	  x = sessionStorage.getItem("currentlyloggedin") + "/false"
+  }
   if($('#notetext').val() != ""){
     $.ajax({
       type: 'POST',
-      url: 'http://localhost:8000/api/notes/' + sessionStorage.getItem("currentlyloggedin"),
+      url: 'http://localhost:8000/api/notes/' + x,
       dataType: 'json',
       data: json,
       contentType: 'application/json',
       success: function(data) {
         alert(data)
+		console.log("got here")
       }
     });
-  }
-  if($('#savedOption').is(':checked')){
-    //run query
   }
 });
 </script>
