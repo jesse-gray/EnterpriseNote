@@ -90,7 +90,6 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 				Value: CookieID,
 			}
 			// set the cookie on client
-			fmt.Println("got here")
 			http.SetCookie(w, userCookie)
 			fmt.Printf("Log in was Successful") // console use only
 			result = true

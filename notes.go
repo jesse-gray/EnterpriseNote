@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -28,7 +27,6 @@ func getNotes(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(c.Value)
 	sqlStatement := `SELECT DISTINCT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id JOIN "user" AS note_user ON note.author_id = note_user.user_id JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note_user.cookie_id = $1 OR (permissions_user.cookie_id = $1 AND permissions.read_permission = true)`
 	rows, err := db.Query(sqlStatement, c.Value)
 	if err != nil {
@@ -57,9 +55,14 @@ func getNote(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
-	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id WHERE note.note_id = $1 AND (author_id = $2 OR (permissions.user_id = $2 AND permissions.read_permission = true))`
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
+	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id JOIN "user" AS note_user ON note.author_id = note_user.user_id JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note.note_id = $1 AND (note_user.cookie_id = $2 OR (permissions_user.cookie_id = $2 AND permissions.read_permission = true))`
 	var note Note
-	row := db.QueryRow(sqlStatement, params["id"], params["user"])
+	row := db.QueryRow(sqlStatement, params["id"], c.Value)
 	switch err := row.Scan(&note.NoteID, &note.NoteText, &note.AuthorID); err {
 	case sql.ErrNoRows:
 		json.NewEncoder(w).Encode(&note)
@@ -120,10 +123,15 @@ func updateNote(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
 	var note Note
 	_ = json.NewDecoder(r.Body).Decode(&note)
-	sqlStatement := `UPDATE note SET note_text = $1 FROM permissions WHERE note.note_id = $2 AND (author_id = $3 OR (permissions.user_id = $3 AND permissions.write_permission = true))`
-	_, err := db.Exec(sqlStatement, note.NoteText, params["id"])
+	sqlStatement := `UPDATE note SET note_text = $1 FROM permissions JOIN "user" AS note_user ON permissions.user_id = note_user.user_id JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note.note_id = $2 AND (note_user.cookie_id = $3 OR (permissions_user.cookie_id = $3 AND permissions.write_permission = true))`
+	_, err = db.Exec(sqlStatement, note.NoteText, params["id"], c.Value)
 	if err != nil {
 		panic(err)
 	}
