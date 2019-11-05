@@ -63,11 +63,11 @@ function processUsers(arr) {
 }
 
 //Page loads
-function splashPageLoad() {
-    if (sessionStorage.getItem("currentlyloggedin") != undefined) {
-        location.replace("/api/home")
-    }
-}
+// function splashPageLoad() {
+//     if (document.cookie != undefined) {
+//         //location.replace("/api/home")
+//     }
+// }
 
 function loadUpdateNotePage() {
     document.getElementById("formnoteid").value = sessionStorage.getItem("noteid");
