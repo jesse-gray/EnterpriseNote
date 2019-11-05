@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 // function to check that entered username is valid must complete this
@@ -106,16 +108,21 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 
 func searchSQL(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	//params := mux.Vars(r)
+	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
 	var notes []Note
 	var note Note
-	sqlStatement, err := db.Prepare("SELECT note.note_id, note.note_text, note.author_id FROM note LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) WHERE note_text ~ $2 AND note.author_id = $1 OR (note_text ~ $2 AND permissions.user_id = $1 AND (permissions.read_permission = TRUE))")
+	sqlStatement, err := db.Prepare("SELECT note.note_id, note.note_text, note.author_id FROM note LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) JOIN \"user\" AS note_user ON note.author_id = note_user.user_id JOIN \"user\" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note_text ~ $2 AND note_user.cookie_id = $1 OR (note_text ~ $2 AND permissions_user.cookie_id = $1 AND (permissions.read_permission = TRUE))")
 	if err != nil {
 		log.Fatal(err)
 	}
-	rows, err := sqlStatement.Query(1, "sample") // need to figure out where to get text we are searching for
+	rows, err := sqlStatement.Query(c.Value, params["sql"]) // need to figure out where to get text we are searching for
 	if err != nil {
 		log.Fatal(err)
 	}

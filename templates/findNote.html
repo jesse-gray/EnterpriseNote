@@ -41,7 +41,6 @@
 $('#findNoteForm').on('submit', function(event) {
   event.preventDefault();
   const json = serialize_form(this);
-  console.log($('#searchterm').val())
 
   if($('#searchterm').val() != ""){
     $.ajax({
