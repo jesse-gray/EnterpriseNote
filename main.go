@@ -26,6 +26,7 @@ func main() {
 	r.HandleFunc("/api/updatePerms", updatePermsHandler)
 	r.HandleFunc("/api/findNote", findNoteHandler)
 	r.HandleFunc("/api/analyseNote", analyseNoteHandler)
+	r.HandleFunc("/api/viewFavourites", viewFavouritesHandler)
 	//API routing
 	r.HandleFunc("/api/login", secureLogin).Methods("POST")
 	r.HandleFunc("/api/logout", logout).Methods("POST")
@@ -39,6 +40,9 @@ func main() {
 	r.HandleFunc("/api/users", deleteUser).Methods("DELETE")
 	r.HandleFunc("/api/users", updateUser).Methods("PUT")
 	r.HandleFunc("/api/permission", updatePermission).Methods("PUT")
+	r.HandleFunc("/api/favourite", getFavourites).Methods("GET")
+	r.HandleFunc("/api/favourite", createFavourite).Methods("POST")
+	r.HandleFunc("/api/favourite/{id}", deleteFavourite).Methods("DELETE")
 	//JavaScript and CSS handlers
 	r.PathPrefix("/javascript/").Handler(http.StripPrefix("/javascript/", http.FileServer(http.Dir("./javascript"))))
 	r.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir("./css"))))

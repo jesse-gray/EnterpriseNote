@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 //Permission Struct
@@ -50,5 +52,79 @@ func updatePermission(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
+	}
+}
+
+//Get all favourites
+func getFavourites(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	db := opendb()
+	defer db.Close()
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
+	sqlStatement := `SELECT "user".user_id, "user".user_first_name, "user".user_last_name, "user".cookie_id, "user".user_password FROM "user" JOIN favourites ON "user".user_id = favourites.favourite_id JOIN "user" AS author ON favourites.author_id = author.user_id WHERE author.cookie_id = $1`
+	rows, err := db.Query(sqlStatement, c.Value)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	var users []User
+	for rows.Next() {
+		var user User
+		err = rows.Scan(&user.UserID, &user.FirstName, &user.LastName, &user.CookieID, &user.Password)
+		if err != nil {
+			panic(err)
+		}
+		users = append(users, user)
+	}
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+	json.NewEncoder(w).Encode(users)
+
+}
+
+//Create a new favourite
+func createFavourite(w http.ResponseWriter, r *http.Request) {
+	var newPermission Permission
+	_ = json.NewDecoder(r.Body).Decode(&newPermission)
+	db := opendb()
+	defer db.Close()
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
+	//Get currently logged in user ID
+	var authorID int
+	sqlStatement := `SELECT user_id FROM "user" WHERE cookie_id = $1`
+	row := db.QueryRow(sqlStatement, c.Value)
+	err = row.Scan(&authorID)
+	//Insert into table
+	sqlStatement = `INSERT INTO favourites VALUES ($1, $2, $3, $4)`
+	_, err = db.Exec(sqlStatement, authorID, newPermission.UserID, newPermission.ReadPermission, newPermission.WritePermission)
+	if err != nil {
+		panic(err)
+	}
+}
+
+//Delete a favourite
+func deleteFavourite(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	db := opendb()
+	defer db.Close()
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
+	sqlStatement := `DELETE FROM favourites USING "user" WHERE favourites.author_id = "user".user_id AND cookie_id = $1 AND favourite_id = $2`
+	_, err = db.Exec(sqlStatement, c.Value, params["id"])
+	if err != nil {
+		panic(err)
 	}
 }

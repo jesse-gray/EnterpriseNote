@@ -9,7 +9,9 @@ function loadNotes() {
     xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             var myArr = JSON.parse(this.responseText);
-            processNotes(myArr);
+            if (myArr != null) {
+                processNotes(myArr);
+            }
         }
     };
 }
@@ -41,7 +43,9 @@ function loadUsers() {
     xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             var myArr = JSON.parse(this.responseText);
-            processUsers(myArr);
+            if (myArr != null) {
+                processUsers(myArr);
+            }
         }
     };
 }
@@ -60,6 +64,42 @@ function processUsers(arr) {
     }
     document.getElementById("userProfile").innerHTML = profileOutput;
     document.getElementById("userList").innerHTML = userOutput;
+}
+
+function loadFavourites() {
+    var url = "http://localhost:8000/api/favourite";
+
+    //Declare XMLHttpRequest Object
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var myArr = JSON.parse(this.responseText);
+            if (myArr != null) {
+                processFavourites(myArr);
+            }
+        }
+    };
+}
+
+function processFavourites(arr) {
+    var output = "<h2>Your Favourites:</h2>";
+    for (var i = 0; i < arr.length; i++) {
+        //Display extracted info into the divs
+        output += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3 class="card-title">User ID: ' + arr[i].userid + '</h3><p class="card-text">Name: ' + arr[i].firstname + ' ' + arr[i].lastname + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="removeButton" value="' + arr[i].userid + '" onclick="removeFave(this.value)" type="button">Remove</button></div></div></div></div></div>';
+    }
+    document.getElementById("userList").innerHTML = output;
+}
+
+function removeFave(userID) {
+    if (window.confirm("Are you sure you want to remove UserID: " + userID + " from favourites?")) {
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:8000/api/favourite/' + userID
+        });
+        location.href = 'viewFavourites';
+    }
 }
 
 //Page loads
