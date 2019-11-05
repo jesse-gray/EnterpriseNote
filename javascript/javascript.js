@@ -141,6 +141,23 @@ function loadNote() {
     }
 }
 
+function findNote() {
+    //Create SQL statement
+
+    //Send to API
+    var url = "http://localhost:8000/api/note/" + sqlStatement;
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var note = JSON.parse(this.responseText);
+            var output = '<div class="card text-white bg-secondary mb-3"><div class="card-body"><h3 class="card-title">Note ID: ' + note.noteid + '</h3><p class="card-text">Note Text: ' + note.notetext + '</p><p class="card-text">Author ID: ' + note.authorid + '</p></div></div>';
+            document.getElementById("noteDetail").innerHTML = output;
+        }
+    }
+}
+
 function updateNote(noteID) {
     sessionStorage.setItem("noteid", noteID)
     location.href = 'updateNote';
