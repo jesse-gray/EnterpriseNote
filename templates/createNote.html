@@ -55,10 +55,9 @@ $('#createForm').on('submit', function(event) {
       data: json,
       contentType: 'application/json',
       success: function(data) {
-        alert(data)
-		console.log("got here")
       }
     });
+	location.replace("home")
   }
 });
 </script>

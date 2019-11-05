@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -11,27 +10,8 @@ type User struct {
 	UserID    string `json:"userid"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
+	CookieID  string `json:"cookieid"`
 	Password  string `json:"password"`
-}
-
-//Login
-func login(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var user User
-	_ = json.NewDecoder(r.Body).Decode(&user)
-	db := opendb()
-	defer db.Close()
-	sqlStatement := `SELECT user_id FROM "user" WHERE user_id = $1 AND user_password = $2`
-	row := db.QueryRow(sqlStatement, user.UserID, user.Password)
-	var logon int
-	switch err := row.Scan(&logon); err {
-	case sql.ErrNoRows:
-		json.NewEncoder(w).Encode(&logon)
-	case nil:
-		json.NewEncoder(w).Encode(logon)
-	default:
-		panic(err)
-	}
 }
 
 //Get ALL users
@@ -39,7 +19,8 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	db := opendb()
 	defer db.Close()
-	sqlStatement := `SELECT user_id, user_first_name, user_last_name, user_password FROM "user"`
+	// sqlStatement := `SELECT user_id, user_first_name, user_last_name, user_password FROM "user"`
+	sqlStatement := `SELECT * FROM "user"`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		panic(err)
@@ -48,7 +29,7 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 	var users []User
 	for rows.Next() {
 		var user User
-		err = rows.Scan(&user.UserID, &user.FirstName, &user.LastName, &user.Password)
+		err = rows.Scan(&user.UserID, &user.FirstName, &user.LastName, &user.CookieID, &user.Password)
 		if err != nil {
 			panic(err)
 		}

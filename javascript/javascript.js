@@ -1,6 +1,6 @@
 //Loads notes
 function loadNotes() {
-    var url = "http://localhost:8000/api/notes/" + sessionStorage.getItem("currentlyloggedin");
+    var url = "http://localhost:8000/api/notes";
 
     //Declare XMLHttpRequest Object
     var xmlhttp = new XMLHttpRequest();
@@ -19,8 +19,9 @@ function processNotes(arr) {
     var yourOutput = "<h2>Your Notes</h2>";
     var shareOutput = "<h2>Notes that have been shared with you</h2>";
     for (var i = 0; i < arr.length; i++) {
-        //Display extracted info into the divs
-        if (arr[i].authorid == sessionStorage.getItem("currentlyloggedin")) {
+        console.log(arr[i].cookieid + " : " + document.cookie.substring(document.cookie.indexOf("=") + 1))
+            //Display extracted info into the divs
+        if (arr[i].cookieid == document.cookie.substring(document.cookie.indexOf("=") + 1)) {
             yourOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3>Note ID: ' + arr[i].noteid + '</h3><p class="card-text">Note Text: ' + arr[i].notetext + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="viewBtn" value="' + arr[i].noteid + '" onclick="viewNote(this.value)" type="button">View</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="deleteButton" value="' + arr[i].noteid + '" onclick="deleteNote(this.value)" type="button">Delete</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updatePerms" value="' + arr[i].noteid + '" onclick="updatePerms(this.value)" type="button">Update Permissions</button></div></div></div></div></div>';
         } else {
             shareOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3 class="card-title">Note ID: ' + arr[i].noteid + '</h3><p class="card-text">Note Text: ' + arr[i].notetext + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="viewBtn" value="' + arr[i].noteid + '" onclick="viewNote(this.value)" type="button">View</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].noteid + '" onclick="updateNote(this.value)" type="button">Update</button></div></div></div></div></div>';
@@ -52,8 +53,7 @@ function processUsers(arr) {
     var userOutput = "<h2>All Other Users:</h2>";
     for (var i = 0; i < arr.length; i++) {
         //Display extracted info into the divs
-        console.log(document.cookie.substring(document.cookie.indexOf("=") + 1))
-        if (arr[i].userid == sessionStorage.getItem("currentlyloggedin")) {
+        if (arr[i].cookieid == document.cookie.substring(document.cookie.indexOf("=") + 1)) {
             profileOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3 class="card-title">User ID: ' + arr[i].userid + '</h3><p class="card-text">Name: ' + arr[i].firstname + ' ' + arr[i].lastname + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].userid + '" onclick="location.href = \"updateUser\"" type="button">Update</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="deleteButton" onclick="deleteUser()" type="button">Delete</button></div></div></div></div>';
         } else {
             userOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><h5 class="card-title">User ID: ' + arr[i].userid + '</h5><p class="card-text">Name: ' + arr[i].firstname + ' ' + arr[i].lastname + '</p></div></div></div>';
