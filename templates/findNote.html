@@ -17,7 +17,7 @@
 				<label class="col-sm-6 col-form-label">Enter Search Term: </label>
                 <input type="text" class="form-control" id="searchterm" name="searchterm">
 			</div>
-			<button type="submit" class="btn btn-secondary">Submit</button>
+			<button type="submit" class="btn btn-secondary" onclick="findNote()">Submit</button>
 		</form>
         <hr>
         <div id="yourNotes" class="container-fluid">
@@ -31,28 +31,3 @@
         </div>
 	</div>
 </body>
-
-<script type="text/javascript">
-  const serialize_form = form => JSON.stringify(
-  Array.from(new FormData(form).entries())
-       .reduce((m, [ key, value ]) => Object.assign(m, { [key]: value }), {})
-);
-
-$('#findNoteForm').on('submit', function(event) {
-  event.preventDefault();
-  const json = serialize_form(this);
-
-  if($('#searchterm').val() != ""){
-    $.ajax({
-      type: 'GET',
-      url: 'http://localhost:8000/api/notes/' + $('#searchterm').val(),
-      dataType: 'json',
-      data: json,
-      contentType: 'application/json',
-      success: function(data) {
-          processNotes(data)
-      }
-    });
-  }
-});
-</script>

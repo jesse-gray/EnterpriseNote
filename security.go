@@ -118,7 +118,7 @@ func searchSQL(w http.ResponseWriter, r *http.Request) {
 	}
 	var notes []Note
 	var note Note
-	sqlStatement, err := db.Prepare("SELECT note.note_id, note.note_text, note.author_id FROM note LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) JOIN \"user\" AS note_user ON note.author_id = note_user.user_id JOIN \"user\" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note_text ~ $2 AND note_user.cookie_id = $1 OR (note_text ~ $2 AND permissions_user.cookie_id = $1 AND (permissions.read_permission = TRUE))")
+	sqlStatement, err := db.Prepare("SELECT note.note_id, note.note_text, note.author_id FROM note LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) JOIN \"user\" AS note_user ON note.author_id = note_user.user_id LEFT JOIN \"user\" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note_text ~ $2 AND note_user.cookie_id = $1 OR (note_text ~ $2 AND permissions_user.cookie_id = $1 AND (permissions.read_permission = TRUE))")
 	if err != nil {
 		log.Fatal(err)
 	}
