@@ -111,8 +111,13 @@ func deleteNote(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
-	sqlStatement := `DELETE FROM note WHERE note_id = $1`
-	_, err := db.Exec(sqlStatement, params["id"])
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
+	sqlStatement := `DELETE FROM note JOIN "user" ON note.author_id = "user".user_id WHERE note_id = $1 AND cookie_id = $2`
+	_, err = db.Exec(sqlStatement, params["id"], c.Value)
 	if err != nil {
 		panic(err)
 	}
