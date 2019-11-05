@@ -87,8 +87,8 @@ func createNote(w http.ResponseWriter, r *http.Request) {
 		sqlStatement := `SELECT MAX(note_id) FROM note`
 		err := db.QueryRow(sqlStatement).Scan(&noteID)
 
-		sqlStatement = `INSERT INTO permissions SELECT $1 AS note_id, favourite_id, read_permission, write_permission FROM favourites WHERE author_id = $2`
-		_, err = db.Exec(sqlStatement, noteID, params["id"])
+		sqlStatement = `INSERT INTO permissions SELECT $1 AS note_id, favourite_id, read_permission, write_permission FROM favourites JOIN "user" ON favourites.author_id = "user".user_id WHERE cookie_id = $2`
+		_, err = db.Exec(sqlStatement, noteID, c.Value)
 		if err != nil {
 			panic(err)
 		}
