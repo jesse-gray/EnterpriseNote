@@ -53,7 +53,7 @@ function processUsers(arr) {
     for (var i = 0; i < arr.length; i++) {
         //Display extracted info into the divs
         if (arr[i].userid == sessionStorage.getItem("currentlyloggedin")) {
-            profileOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3 class="card-title">User ID: ' + arr[i].userid + '</h3><p class="card-text">Name: ' + arr[i].firstname + ' ' + arr[i].lastname + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].userid + '" onclick="updateUser(this.value)" type="button">Update</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="deleteButton" value="' + arr[i].userid + '" onclick="deleteUser(this.value)" type="button">Delete</button></div></div></div></div>';
+            profileOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3 class="card-title">User ID: ' + arr[i].userid + '</h3><p class="card-text">Name: ' + arr[i].firstname + ' ' + arr[i].lastname + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].userid + '" onclick="location.href = \"updateUser\"" type="button">Update</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="deleteButton" onclick="deleteUser()" type="button">Delete</button></div></div></div></div>';
         } else {
             userOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><h5 class="card-title">User ID: ' + arr[i].userid + '</h5><p class="card-text">Name: ' + arr[i].firstname + ' ' + arr[i].lastname + '</p></div></div></div>';
         }
@@ -122,16 +122,11 @@ function updatePerms(noteID) {
 }
 
 //User managmenent functions
-function updateUser(userID) {
-    sessionStorage.setItem("userid", userID)
-    location.href = 'updateUser';
-}
-
-function deleteUser(userID) {
+function deleteUser() {
     if (window.confirm("Are you sure you want to delete this user?")) {
         $.ajax({
             type: 'DELETE',
-            url: 'http://localhost:8000/api/users/' + userID
+            url: 'http://localhost:8000/api/users'
         });
         sessionStorage.setItem("currentlyloggedin", 0);
         location.replace('/api/');

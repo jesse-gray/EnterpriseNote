@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 //User Struct
@@ -78,11 +76,17 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 //Delete a user
 func deleteUser(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
+
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
+
 	sqlStatement := `DELETE FROM "user" WHERE user_id = $1`
-	_, err := db.Exec(sqlStatement, params["id"])
+	_, err = db.Exec(sqlStatement, c)
 	if err != nil {
 		panic(err)
 	}
@@ -90,13 +94,19 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 //Update a user
 func updateUser(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
 	db := opendb()
 	defer db.Close()
+
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
+
 	var user User
 	_ = json.NewDecoder(r.Body).Decode(&user)
-	sqlStatement := `UPDATE "user" SET user_first_name = $1, user_last_name = $2, user_password = $3 WHERE user_id = $4`
-	_, err := db.Exec(sqlStatement, user.FirstName, user.LastName, user.Password, params["id"])
+	sqlStatement := `UPDATE "user" SET user_first_name = $1, user_last_name = $2, user_password = $3 WHERE cookie_id = $4`
+	_, err = db.Exec(sqlStatement, user.FirstName, user.LastName, user.Password, c)
 	if err != nil {
 		panic(err)
 	}

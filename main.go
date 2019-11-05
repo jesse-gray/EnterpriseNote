@@ -35,8 +35,8 @@ func main() {
 	r.HandleFunc("/api/notes/{id}", deleteNote).Methods("DELETE")
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
-	r.HandleFunc("/api/users/{id}", deleteUser).Methods("DELETE")
-	r.HandleFunc("/api/users/{id}", updateUser).Methods("PUT")
+	r.HandleFunc("/api/users", deleteUser).Methods("DELETE")
+	r.HandleFunc("/api/users", updateUser).Methods("PUT")
 	r.HandleFunc("/api/permission", updatePermission).Methods("PUT")
 	//JavaScript and CSS handlers
 	r.PathPrefix("/javascript/").Handler(http.StripPrefix("/javascript/", http.FileServer(http.Dir("./javascript"))))
