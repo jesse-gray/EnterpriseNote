@@ -66,8 +66,8 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	sqlStatement := `DELETE FROM "user" WHERE user_id = $1`
-	_, err = db.Exec(sqlStatement, c)
+	sqlStatement := `DELETE FROM "user" WHERE cookie_id = $1`
+	_, err = db.Exec(sqlStatement, c.Value)
 	if err != nil {
 		panic(err)
 	}
