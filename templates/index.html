@@ -53,10 +53,9 @@ $('#loginForm').on('submit', function(event) {
     data: json,
     contentType: 'application/json',
     success: function(data) {
-      sessionStorage.setItem("currentlyloggedin", data)
-      if(data != 0){
-        location.replace("home")
-      }
+        if(data){
+            location.replace("home")
+        }
     }
   });
 });

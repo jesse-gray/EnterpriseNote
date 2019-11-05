@@ -52,6 +52,7 @@ function processUsers(arr) {
     var userOutput = "<h2>All Other Users:</h2>";
     for (var i = 0; i < arr.length; i++) {
         //Display extracted info into the divs
+        console.log(document.cookie.substring(document.cookie.indexOf("=") + 1))
         if (arr[i].userid == sessionStorage.getItem("currentlyloggedin")) {
             profileOutput += '<div class="container-fluid"><div class="card text-white bg-secondary mb-3"><div class="card-body"><div class="row"><div class="col-sm-8"><h3 class="card-title">User ID: ' + arr[i].userid + '</h3><p class="card-text">Name: ' + arr[i].firstname + ' ' + arr[i].lastname + '</p></div><div class="col-sm-4"><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="updateBtn" value="' + arr[i].userid + '" onclick="location.href = \"updateUser\"" type="button">Update</button><button class="btn btn-light mr-1 mx-auto d-block btn-block" id="deleteButton" onclick="deleteUser()" type="button">Delete</button></div></div></div></div>';
         } else {
@@ -131,4 +132,15 @@ function deleteUser() {
         sessionStorage.setItem("currentlyloggedin", 0);
         location.replace('/api/');
     }
+}
+
+function logout() {
+    if (window.confirm("Are you sure you want to log out?")) {
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8000/api/logout'
+        });
+        location.href = '/api/';
+    }
+
 }

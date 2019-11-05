@@ -39,7 +39,7 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	db := opendb()
 	defer db.Close()
-	sqlStatement := `SELECT * FROM "user"`
+	sqlStatement := `SELECT user_id, user_first_name, user_last_name, user_password FROM "user"`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		panic(err)
@@ -106,7 +106,7 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	var user User
 	_ = json.NewDecoder(r.Body).Decode(&user)
 	sqlStatement := `UPDATE "user" SET user_first_name = $1, user_last_name = $2, user_password = $3 WHERE cookie_id = $4`
-	_, err = db.Exec(sqlStatement, user.FirstName, user.LastName, user.Password, c)
+	_, err = db.Exec(sqlStatement, user.FirstName, user.LastName, user.Password, c.Value)
 	if err != nil {
 		panic(err)
 	}

@@ -43,9 +43,9 @@ $('#createForm').on('submit', function(event) {
   const json = serialize_form(this);
 
   if($('#savedOption').is(':checked')){
-	  x = sessionStorage.getItem("currentlyloggedin") + "/true"
+	  x = "true"
   } else {
-	  x = sessionStorage.getItem("currentlyloggedin") + "/false"
+	  x = "false"
   }
   if($('#notetext').val() != ""){
     $.ajax({

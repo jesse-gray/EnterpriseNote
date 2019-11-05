@@ -69,13 +69,18 @@ func createNote(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&note)
 	db := opendb()
 	defer db.Close()
-	sqlStatement := `INSERT INTO note (note_text, author_id) VALUES ($1, $2)`
-	_, err := db.Exec(sqlStatement, note.NoteText, params["id"])
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
+	sqlStatement := `INSERT INTO note (note_text, author_id) SELECT $1 AS note_text, user_id FROM "user" WHERE cookie_id = $2`
+	_, err = db.Exec(sqlStatement, note.NoteText, c.Value)
 	if err != nil {
 		panic(err)
 	}
 
-	//favourites query
+	//Favourites query
 	if params["bool"] == "true" {
 		var noteID string
 

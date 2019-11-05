@@ -28,9 +28,10 @@ func main() {
 	r.HandleFunc("/api/analyseNote", analyseNoteHandler)
 	//API routing
 	r.HandleFunc("/api/login", secureLogin).Methods("POST")
+	r.HandleFunc("/api/logout", logout).Methods("POST")
 	r.HandleFunc("/api/notes/{id}", getNotes).Methods("GET")
 	r.HandleFunc("/api/note/{id}/{user}", getNote).Methods("GET")
-	r.HandleFunc("/api/notes/{id}/{bool}", createNote).Methods("POST")
+	r.HandleFunc("/api/notes/{bool}", createNote).Methods("POST")
 	r.HandleFunc("/api/notes/{id}", updateNote).Methods("PUT")
 	r.HandleFunc("/api/notes/{id}", deleteNote).Methods("DELETE")
 	r.HandleFunc("/api/users", getUsers).Methods("GET")

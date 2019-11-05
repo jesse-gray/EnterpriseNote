@@ -9,23 +9,6 @@ import (
 	"net/http"
 )
 
-// function to open database from jesse's code for testing
-
-// function opendbtest() *sql.DB {
-// 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-// 		"password=%s dbname=%s sslmode=disable",
-// 		host, port, user, password, dbname)
-// 	db, err := sql.Open("postgres", psqlInfo)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	err = db.Ping()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	return db
-// }
-
 // function to check that entered username is valid must complete this
 func validateUser(userid string) bool {
 	var user int
@@ -84,6 +67,7 @@ func checkPassword(toCheck User) bool {
 
 func secureLogin(w http.ResponseWriter, r *http.Request) {
 	var user User
+	var result bool
 	// var userPassword Pword
 	streamUser, err := ioutil.ReadAll(r.Body) // parsing data from a post request
 	if err != nil {
@@ -106,8 +90,11 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 				Value: CookieID,
 			}
 			// set the cookie on client
+			fmt.Println("got here")
 			http.SetCookie(w, userCookie)
 			fmt.Printf("Log in was Successful") // console use only
+			result = true
+			json.NewEncoder(w).Encode(result)
 		} else {
 			fmt.Printf("Log in failed, incorrect password") // console use only
 		}

@@ -76,19 +76,18 @@ func deleteCookie(w http.ResponseWriter, r *http.Request) {
 }
 
 // function to return userID if using cookieID
-
-func findUserID(req *http.Request) (userID int) {
+func findUserID(r *http.Request) (userID string) {
 	db := opendb()
 	defer db.Close()
 	// get the cookieID
-	cookieTracer, err := req.Cookie("_cookie")
-	if err != nil { // if error occurs return nothing as ID
-		cookieTracer = nil
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
 	}
-	cookieID := cookieTracer.Value
 	// sql search of user table for matching cookie
 	sqlStatement := `SELECT user_id FROM "user" WHERE cookie_id=$1`
-	rows, err := db.Query(sqlStatement, cookieID)
+	rows, err := db.Query(sqlStatement, c)
 	if err != nil {
 		panic(err)
 	}
@@ -134,7 +133,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	if isUseridLoggedIn(r) {
 		deleteCookie(w, r)
 		removeCookieFromUser(w, r)
-		//fmt.printf(w, "Successfully logged out") console use only
+		//fmt.printf(w, "Successfully logged out") //console use only
 
 	} else {
 		//fmt.printf(w, "Already logged out") console use only
