@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -27,26 +28,41 @@ func getNotes(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	sqlStatement := `SELECT DISTINCT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id JOIN "user" AS note_user ON note.author_id = note_user.user_id LEFT JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note_user.cookie_id = $1 OR (permissions_user.cookie_id = $1 AND permissions.read_permission = true)`
+	sqlStatement := `SELECT DISTINCT note.note_id, note_text, author_id, note_user.cookie_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id JOIN "user" AS note_user ON note.author_id = note_user.user_id LEFT JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note_user.cookie_id = $1 OR (permissions_user.cookie_id = $1 AND permissions.read_permission = true)`
 	rows, err := db.Query(sqlStatement, c.Value)
 	if err != nil {
 		panic(err)
 	}
 	defer rows.Close()
-	var notes []Note
+	var allNotes [2][]Note
+	var myNotes []Note
+	var sharedNotes []Note
 	for rows.Next() {
 		var note Note
-		err = rows.Scan(&note.NoteID, &note.NoteText, &note.AuthorID)
+		var cookie string
+		err = rows.Scan(&note.NoteID, &note.NoteText, &note.AuthorID, &cookie)
 		if err != nil {
 			panic(err)
 		}
-		notes = append(notes, note)
+		if cookie != "" {
+			myNotes = append(myNotes, note)
+		} else {
+			sharedNotes = append(sharedNotes, note)
+		}
 	}
+
+	//Add them to array of slices.
+	allNotes[0] = myNotes
+	allNotes[1] = sharedNotes
+	fmt.Println(myNotes)
+	fmt.Println(sharedNotes)
+	fmt.Println(allNotes)
+
 	err = rows.Err()
 	if err != nil {
 		panic(err)
 	}
-	json.NewEncoder(w).Encode(notes)
+	json.NewEncoder(w).Encode(allNotes)
 }
 
 //Get single note
