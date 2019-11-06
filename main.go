@@ -36,6 +36,7 @@ func main() {
 	r.HandleFunc("/api/notes/{id}", updateNote).Methods("PUT")
 	r.HandleFunc("/api/notes/{id}", deleteNote).Methods("DELETE")
 	r.HandleFunc("/api/notes/{sql}", searchSQL).Methods("GET")
+	r.HandleFunc("/api/notes/{id}/{sql}", analyseNote).Methods("GET")
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
 	r.HandleFunc("/api/users", deleteUser).Methods("DELETE")

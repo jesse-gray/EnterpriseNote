@@ -105,7 +105,6 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 // function to execute text search in SQL
-
 func searchSQL(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -122,7 +121,7 @@ func searchSQL(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	rows, err := sqlStatement.Query(c.Value, params["sql"]) // need to figure out where to get text we are searching for
+	rows, err := sqlStatement.Query(c.Value, params["sql"])
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -135,4 +134,28 @@ func searchSQL(w http.ResponseWriter, r *http.Request) {
 		notes = append(notes, note)
 	}
 	json.NewEncoder(w).Encode(&notes) // need to add error functionality here
+}
+
+//Analyse note function
+func analyseNote(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	db := opendb()
+	defer db.Close()
+	//Get cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
+	}
+	//Check note exists and user has permission
+	var noteExists bool
+	sqlStatement := `SELECT EXISTS (SELECT 1 FROM note JOIN "user" AS note_user ON note.author_id = note_user.user_id LEFT JOIN permissions ON note.note_id = permissions.note_id LEFT JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note.note_id = $1 AND note_user.cookie_id = $2 OR (note.note_id = $1 AND permissions_user.cookie_id = $2 AND permissions.read_permission = true))`
+	err = db.QueryRow(sqlStatement, params["id"], c.Value).Scan(&noteExists)
+	//Count occurances
+	sqlStatement = `SELECT (length(str) - length(replace(str, replacestr, '')) )::int / length(replacestr) FROM (VALUES ((SELECT note_text FROM note JOIN "user" AS note_user ON note.author_id = note_user.user_id LEFT JOIN permissions ON note.note_id = permissions.note_id LEFT JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note.note_id = $1 AND note_user.cookie_id = $2 OR (note.note_id = $1 AND permissions_user.cookie_id = $2 AND permissions.read_permission = true)), $3)) AS t(str, replacestr)`
+	row := db.QueryRow(sqlStatement, params["id"], c.Value, params["sql"])
+	var count int
+	err = row.Scan(&count)
+	if noteExists {
+		json.NewEncoder(w).Encode(count)
+	}
 }

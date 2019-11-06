@@ -173,6 +173,36 @@ function findNote() {
     });
 }
 
+function analyseNote() {
+    const serialize_form = form => JSON.stringify(
+        Array.from(new FormData(form).entries())
+        .reduce((m, [key, value]) => Object.assign(m, {
+            [key]: value
+        }), {})
+    );
+
+    $('#findNoteForm').on('submit', function(event) {
+        event.preventDefault();
+        const json = serialize_form(this);
+
+        if ($('#searchterm').val() != "") {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8000/api/notes/' + $('#formnoteid').val() + "/" + $('#searchterm').val(),
+                dataType: 'json',
+                data: json,
+                contentType: 'application/json',
+                success: function(data) {
+                    document.getElementById("notesOutput").innerHTML = '<h2>Results:</h2><p class="card-text">Note ' + $('#formnoteid').val() + ' has ' + data + ' occuurances of "' + $('#searchterm').val() + '"</p>';
+                },
+                error: function(data) {
+                    document.getElementById("notesOutput").innerHTML = '<h2>Results:</h2><p class="card-text">Permission to this note has been denied, or note doesnt exist</p>';
+                }
+            });
+        }
+    });
+}
+
 function updateNote(noteID) {
     sessionStorage.setItem("noteid", noteID)
     location.href = 'updateNote';
