@@ -42,7 +42,7 @@
                     <label class="form-check-label" for="inlineRadio2">No</label>
                 </div>
             </div>
-            <button type="submit" class="btn btn-secondary">Submit</button>
+            <button type="submit" class="btn btn-secondary" onclick="createFavourite()">Submit</button>
         </form>
     </div>
     <hr>
@@ -50,27 +50,3 @@
         <button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
     </div>
 </body>
-
-<script type="text/javascript">
-    $('#addFaveForm').on('submit', function(event) {
-    event.preventDefault();
-    
-    var userid = $('#userid').val()
-    var readpermission = $('input[name="readPerm"]:checked').val()
-    var writepermission = $('input[name="writePerm"]:checked').val()
-
-    var json = JSON.stringify({"userid":parseInt(userid), "readpermission":(readpermission === "true"), "writepermission":(writepermission === "true")})
-    console.log(json)
-    $.ajax({
-        type: 'POST',
-        url: 'http://localhost:8000/api/favourite',
-        dataType: 'json',
-        data: json,
-        contentType: 'application/json',
-        success: function(data) {
-        alert(data)
-        }
-    });
-    location.href='viewFavourites';
-});
-</script>

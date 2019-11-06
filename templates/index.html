@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="form-group row-fluid">
-                <button type="submit" class="btn btn-secondary">Login</button> 
+                <button type="submit" class="btn btn-secondary" onclick="login()">Login</button>
             </div>
         </form>
     </div>
@@ -38,25 +38,3 @@
         <p>If you dont have an account, <a href="signUp">sign up here.</a></p>
     </div>
 </body>
-
-<script type="text/javascript">    
-$('#loginForm').on('submit', function(event) {
-    event.preventDefault();
-
-    var userid = $('#userid').val()
-    var password = $('#password').val()
-    var json = JSON.stringify({"userid":userid, "password":password})
-  $.ajax({
-    type: 'POST',
-    url: 'http://localhost:8000/api/login',
-    dataType: 'json',
-    data: json,
-    contentType: 'application/json',
-    success: function(data) {
-        if(data){
-            location.replace("home")
-        }
-    }
-  });
-});
-</script>

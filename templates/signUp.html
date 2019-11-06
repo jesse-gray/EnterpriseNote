@@ -36,31 +36,9 @@
                     </div>   
                 </div>
                 <div class="form-group row-fluid">
-                    <button type="submit" class="btn btn-secondary">Sign Up</button> 
+                <button type="submit" class="btn btn-secondary" onclick="signUp()">Sign Up</button>
                 </div>
             </div>
         </form>
     </div>
 </body>
-
-<script type="text/javascript">
-$('#signupForm').on('submit', function(event) {
-    event.preventDefault();
-
-    var firstname = $('#firstname').val()
-    var lastname = $('#lastname').val()
-    var signuppassword = $('#signUpPassword').val()
-    var json = JSON.stringify({"firstname":firstname, "lastname":lastname, "password":signuppassword})
-    if((firstname.length > 0) && (signuppassword.length > 0)){
-        $.ajax({
-            type: 'POST',
-            url: 'http://localhost:8000/api/users',
-            dataType: 'json',
-            data: json,
-            contentType: 'application/json'
-        });
-        location.replace("/api/")
-    }
-  
-});
-</script>
