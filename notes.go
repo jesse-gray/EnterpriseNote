@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -28,35 +27,36 @@ func getNotes(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	sqlStatement := `SELECT DISTINCT note.note_id, note_text, author_id, note_user.cookie_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id JOIN "user" AS note_user ON note.author_id = note_user.user_id LEFT JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note_user.cookie_id = $1 OR (permissions_user.cookie_id = $1 AND permissions.read_permission = true)`
+	sqlStatement := `SELECT DISTINCT note.note_id, note_text, author_id, note_user.cookie_id, write_permission = true OR note_user.cookie_id = $1 FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id JOIN "user" AS note_user ON note.author_id = note_user.user_id LEFT JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note_user.cookie_id = $1 OR (permissions_user.cookie_id = $1 AND permissions.read_permission = true)`
 	rows, err := db.Query(sqlStatement, c.Value)
 	if err != nil {
 		panic(err)
 	}
 	defer rows.Close()
-	var allNotes [2][]Note
+	var allNotes [3][]Note
 	var myNotes []Note
-	var sharedNotes []Note
+	var writeNotes []Note
+	var readNotes []Note
 	for rows.Next() {
 		var note Note
 		var cookie string
-		err = rows.Scan(&note.NoteID, &note.NoteText, &note.AuthorID, &cookie)
+		var writePerm bool
+		err = rows.Scan(&note.NoteID, &note.NoteText, &note.AuthorID, &cookie, &writePerm)
 		if err != nil {
 			panic(err)
 		}
 		if cookie != "" {
 			myNotes = append(myNotes, note)
+		} else if writePerm {
+			writeNotes = append(writeNotes, note)
 		} else {
-			sharedNotes = append(sharedNotes, note)
+			readNotes = append(readNotes, note)
 		}
 	}
-
 	//Add them to array of slices.
 	allNotes[0] = myNotes
-	allNotes[1] = sharedNotes
-	fmt.Println(myNotes)
-	fmt.Println(sharedNotes)
-	fmt.Println(allNotes)
+	allNotes[1] = writeNotes
+	allNotes[2] = readNotes
 
 	err = rows.Err()
 	if err != nil {
@@ -76,7 +76,7 @@ func getNote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id JOIN "user" AS note_user ON note.author_id = note_user.user_id JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note.note_id = $1 AND (note_user.cookie_id = $2 OR (permissions_user.cookie_id = $2 AND permissions.read_permission = true))`
+	sqlStatement := `SELECT note.note_id, note_text, author_id FROM note LEFT JOIN permissions ON note.note_id = permissions.note_id JOIN "user" AS note_user ON note.author_id = note_user.user_id LEFT JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note.note_id = $1 AND (note_user.cookie_id = $2 OR (permissions_user.cookie_id = $2 AND permissions.read_permission = true))`
 	var note Note
 	row := db.QueryRow(sqlStatement, params["id"], c.Value)
 	switch err := row.Scan(&note.NoteID, &note.NoteText, &note.AuthorID); err {
