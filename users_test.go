@@ -39,7 +39,7 @@ func TestDeleteUser(t *testing.T) {
 	q.Add("user_id", "1")
 	req.URL.RawQuery = q.Encode()
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(deleteNote)
+	handler := http.HandlerFunc(deleteUser)
 	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
@@ -50,7 +50,7 @@ func TestDeleteUser(t *testing.T) {
 	}
 }
 
-func TestUpdateNote(t *testing.T) {
+func TestUpdateUser(t *testing.T) {
 
 	var jsonStr = []byte(`{"user_id":1, "user_first_name":"Gerald", "user_last_name":"Hopkins", "cookie_id":"", "user_password":"password"}`)
 
@@ -60,7 +60,7 @@ func TestUpdateNote(t *testing.T) {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(updateNote)
+	handler := http.HandlerFunc(updateUser)
 	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
