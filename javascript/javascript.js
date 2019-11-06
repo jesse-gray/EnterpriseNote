@@ -22,7 +22,7 @@ function signUp() {
     });
 }
 
-//Logs a user in
+//Logs a user in via RESTful API
 function login() {
     $('#loginForm').on('submit', function(event) {
         event.preventDefault();
@@ -213,7 +213,7 @@ function deleteNote(noteID) {
             type: 'DELETE',
             url: 'http://localhost:8000/api/notes/' + noteID
         });
-        location.href = 'home';
+        location.href = 'viewNotes';
     }
 }
 

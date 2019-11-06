@@ -147,7 +147,7 @@ func deleteNote(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	//Create and execute SQL statement
-	sqlStatement := `DELETE FROM note JOIN "user" ON note.author_id = "user".user_id WHERE note_id = $1 AND cookie_id = $2`
+	sqlStatement := `DELETE FROM note USING "user" WHERE note.author_id = "user".user_id AND note_id = $1 AND cookie_id = $2`
 	_, err := db.Exec(sqlStatement, params["id"], getCookie(r))
 	if err != nil {
 		panic(err)
