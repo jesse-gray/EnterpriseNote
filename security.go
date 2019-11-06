@@ -7,8 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 // function to check that entered username is valid must complete this
@@ -101,76 +99,5 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		fmt.Printf("No such user exists") // need to replace with http message to interact with front end
-	}
-}
-
-// function to execute text search in SQL
-func searchSQL(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	db := opendb()
-	defer db.Close()
-	//Get cookie
-	c, err := r.Cookie("user_id")
-	if err != nil {
-		panic(err)
-	}
-	var allNotes [3][]Note
-	var myNotes []Note
-	var writeNotes []Note
-	var readNotes []Note
-	var note Note
-	sqlStatement, err := db.Prepare("SELECT DISTINCT note.note_id, note.note_text, note.author_id, note_user.cookie_id, write_permission = true OR note_user.cookie_id = $1 FROM note LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) JOIN \"user\" AS note_user ON note.author_id = note_user.user_id LEFT JOIN \"user\" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note_text ~ $2 AND note_user.cookie_id = $1 OR (note_text ~ $2 AND permissions_user.cookie_id = $1 AND (permissions.read_permission = TRUE))")
-	if err != nil {
-		log.Fatal(err)
-	}
-	rows, err := sqlStatement.Query(c.Value, params["sql"])
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for rows.Next() {
-		var cookie string
-		var writePerm bool
-		err = rows.Scan(&note.NoteID, &note.NoteText, &note.AuthorID, &cookie, &writePerm)
-		if err != nil {
-			log.Fatal(err)
-		}
-		if cookie != "" {
-			myNotes = append(myNotes, note)
-		} else if writePerm {
-			writeNotes = append(writeNotes, note)
-		} else {
-			readNotes = append(readNotes, note)
-		}
-	}
-	//Add them to array of slices.
-	allNotes[0] = myNotes
-	allNotes[1] = writeNotes
-	allNotes[2] = readNotes
-	json.NewEncoder(w).Encode(&allNotes)
-}
-
-//Analyse note function
-func analyseNote(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	db := opendb()
-	defer db.Close()
-	//Get cookie
-	c, err := r.Cookie("user_id")
-	if err != nil {
-		panic(err)
-	}
-	//Check note exists and user has permission
-	var noteExists bool
-	sqlStatement := `SELECT EXISTS (SELECT 1 FROM note JOIN "user" AS note_user ON note.author_id = note_user.user_id LEFT JOIN permissions ON note.note_id = permissions.note_id LEFT JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note.note_id = $1 AND note_user.cookie_id = $2 OR (note.note_id = $1 AND permissions_user.cookie_id = $2 AND permissions.read_permission = true))`
-	err = db.QueryRow(sqlStatement, params["id"], c.Value).Scan(&noteExists)
-	//Count occurances
-	sqlStatement = `SELECT (length(str) - length(replace(str, replacestr, '')) )::int / length(replacestr) FROM (VALUES ((SELECT note_text FROM note JOIN "user" AS note_user ON note.author_id = note_user.user_id LEFT JOIN permissions ON note.note_id = permissions.note_id LEFT JOIN "user" AS permissions_user ON permissions.user_id = permissions_user.user_id WHERE note.note_id = $1 AND note_user.cookie_id = $2 OR (note.note_id = $1 AND permissions_user.cookie_id = $2 AND permissions.read_permission = true)), $3)) AS t(str, replacestr)`
-	row := db.QueryRow(sqlStatement, params["id"], c.Value, params["sql"])
-	var count int
-	err = row.Scan(&count)
-	if noteExists {
-		json.NewEncoder(w).Encode(count)
 	}
 }

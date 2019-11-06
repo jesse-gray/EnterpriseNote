@@ -27,6 +27,7 @@ func main() {
 	r.HandleFunc("/api/findNote", findNoteHandler)
 	r.HandleFunc("/api/analyseNote", analyseNoteHandler)
 	r.HandleFunc("/api/viewFavourites", viewFavouritesHandler)
+
 	//API routing
 	r.HandleFunc("/api/login", secureLogin).Methods("POST")
 	r.HandleFunc("/api/logout", logout).Methods("POST")
@@ -45,8 +46,10 @@ func main() {
 	r.HandleFunc("/api/favourite", getFavourites).Methods("GET")
 	r.HandleFunc("/api/favourite", createFavourite).Methods("POST")
 	r.HandleFunc("/api/favourite/{id}", deleteFavourite).Methods("DELETE")
-	//JavaScript and CSS handlers
+
+	//JavaScript handler
 	r.PathPrefix("/javascript/").Handler(http.StripPrefix("/javascript/", http.FileServer(http.Dir("./javascript"))))
-	r.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir("./css"))))
+
+	//Start server on port 8000
 	log.Fatal(http.ListenAndServe(":8000", r))
 }

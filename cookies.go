@@ -51,15 +51,13 @@ func removeCookieFromUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // a function to see if the user is logged in by getting the cookie
-func getCookie(r *http.Request) (cookieID string) {
-
-	cookieTracer, err := r.Cookie("_cookie")
-	if err != nil { // if error occurs return nothing as ID
-		cookieID = " "
-		return cookieID
+func getCookie(r *http.Request) string {
+	//Get user_id cookie
+	c, err := r.Cookie("user_id")
+	if err != nil {
+		panic(err)
 	}
-	cookieID = cookieTracer.Value // return cookie from function on successful read
-	return cookieID
+	return c.Value
 }
 
 // a function to remove cookie from client (to use in secure logout function)
