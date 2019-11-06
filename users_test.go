@@ -11,7 +11,7 @@ func TestCreateUser(t *testing.T) {
 
 	var jsonStr = []byte(`{"user_first_name":"Harlod", "user_last_name":"Boomkin", "cookie_id":"", "user_password":"password"}`)
 
-	req, err := http.NewRequest("Post", "/api/notes/{bool}", bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest("Post", "/api/users", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -30,7 +30,7 @@ func TestCreateUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 
-	req, err := http.NewRequest("DELETE", "/entry", nil)
+	req, err := http.NewRequest("DELETE", "/api/users", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -54,7 +54,7 @@ func TestUpdateUser(t *testing.T) {
 
 	var jsonStr = []byte(`{"user_id":1, "user_first_name":"Gerald", "user_last_name":"Hopkins", "cookie_id":"", "user_password":"password"}`)
 
-	req, err := http.NewRequest("PUT", "/api/notes/{id}", bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest("PUT", "/api/users", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
