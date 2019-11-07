@@ -16,6 +16,7 @@ func TestSecurity(t *testing.T) {
 	assert := assert.New(t)
 
 	var testUser User
+	testUser.UserID = "1"
 	testUser.FirstName = "Bob"
 	testUser.LastName = "Testcase"
 	testUser.Password = "password"
@@ -37,7 +38,7 @@ func TestSecurity(t *testing.T) {
 	if assert.NotNil(db) {
 		// test validate user
 
-		assert.Equal(validateUser("1"), true, "User Exists")
+		assert.Equal(validateUser(testUser.UserID), true, "User Exists")
 
 		// test check password
 
