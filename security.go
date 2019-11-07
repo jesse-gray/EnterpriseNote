@@ -9,23 +9,6 @@ import (
 	"net/http"
 )
 
-// function to open database from jesse's code for testing
-
-// function opendbtest() *sql.DB {
-// 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-// 		"password=%s dbname=%s sslmode=disable",
-// 		host, port, user, password, dbname)
-// 	db, err := sql.Open("postgres", psqlInfo)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	err = db.Ping()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	return db
-// }
-
 // function to check that entered username is valid must complete this
 func validateUser(userid string) bool {
 	var user int
@@ -84,6 +67,7 @@ func checkPassword(toCheck User) bool {
 
 func secureLogin(w http.ResponseWriter, r *http.Request) {
 	var user User
+	var result bool
 	// var userPassword Pword
 	streamUser, err := ioutil.ReadAll(r.Body) // parsing data from a post request
 	if err != nil {
@@ -108,38 +92,12 @@ func secureLogin(w http.ResponseWriter, r *http.Request) {
 			// set the cookie on client
 			http.SetCookie(w, userCookie)
 			fmt.Printf("Log in was Successful") // console use only
+			result = true
+			json.NewEncoder(w).Encode(result)
 		} else {
 			fmt.Printf("Log in failed, incorrect password") // console use only
 		}
 	} else {
 		fmt.Printf("No such user exists") // need to replace with http message to interact with front end
 	}
-}
-
-// function to execute text search in SQL
-
-func searchSQL(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	//params := mux.Vars(r)
-	db := opendb()
-	defer db.Close()
-	var notes []Note
-	var note Note
-	sqlStatement, err := db.Prepare("SELECT note.note_id, note.note_text, note.author_id FROM note LEFT OUTER JOIN permissions ON (note.note_id = permissions.note_id) WHERE note_text ~ $2 AND note.author_id = $1 OR (permissions.user_id = $1 AND (permissions.read_permission = TRUE))")
-	if err != nil {
-		log.Fatal(err)
-	}
-	rows, err := sqlStatement.Query(1, "sample") // need to figure out where to get text we are searching for
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for rows.Next() {
-		err = rows.Scan(&note.NoteID, &note.NoteText, &note.AuthorID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		notes = append(notes, note)
-	}
-	json.NewEncoder(w).Encode(&notes) // need to add error functionality here
 }

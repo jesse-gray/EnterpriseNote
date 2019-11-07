@@ -4,21 +4,18 @@
     <script src="/javascript/javascript.js"></script>
 </head>
 
-<body onload="loadUpdatePermissionPage()">
+<body onload="loadFavourites()">
     <div class="jumbotron jumbotron-fluid">
         <div class="container-fluid">
-            <h1 class="display-4">Update Permissions</h1>
-            <p class="lead">Here is where you can update user permissions for a note.</p>
+            <h1 class="display-4">View Favourites</h1>
+            <p class="lead">Here is where you can view your favourite list.</p>
         </div>
     </div>
+    <div id="userList" class="container-fluid">
+    </div>
     <div class="container-fluid">
-        <form id="updateForm">
-            <div class="form-group row">
-                <label id="noteid" class="col-sm-2 col-form-label">Note ID: </label>
-                <div class="col-sm-10">
-                    <input type="text" readonly class="form-control-plaintext" id="formnoteid" name="noteid" value="">
-                </div>
-            </div>
+        <form id="addFaveForm">
+            <h2>Add New Favourite:</h2>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">User ID: </label>
                 <input type="number" id="userid" name="userid">
@@ -45,36 +42,11 @@
                     <label class="form-check-label" for="inlineRadio2">No</label>
                 </div>
             </div>
-            <button type="submit" class="btn btn-secondary" onclick="updatePerms()">Submit</button>
+            <button type="submit" class="btn btn-secondary" onclick="createFavourite()">Submit</button>
         </form>
     </div>
     <hr>
     <div class="container-fluid">
-        <button id="backBtn" class="btn btn-secondary" onclick='location.href="viewNotes"'>Back</button>
         <button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
     </div>
 </body>
-
-<script type="text/javascript">
-    {{/* $('#updateForm').on('submit', function(event) {
-    event.preventDefault();
-
-    var noteid = $('#formnoteid').val()
-    var userid = $('#userid').val()
-    var readpermission = $('input[name="readPerm"]:checked').val()
-    var writepermission = $('input[name="writePerm"]:checked').val()
-
-    var json = JSON.stringify({"noteid":parseInt(noteid), "userid":parseInt(userid), "readpermission":(readpermission === "true"), "writepermission":(writepermission === "true")})
-    $.ajax({
-        type: 'PUT',
-        url: 'http://localhost:8000/api/permission',
-        dataType: 'json',
-        data: json,
-        contentType: 'application/json',
-        success: function(data) {
-        alert(data)
-        }
-    });
-    location.href='viewNotes';
-}); */}}
-</script>

@@ -31,7 +31,7 @@
                 <label class="col-sm-2 col-form-label">Password: </label>
                 <input id="password" type="password" name="password">
             </div>
-			<button type="submit" class="btn btn-secondary">Submit</button>
+			<button type="submit" class="btn btn-secondary" onclick="updateUser()">Submit</button>
 		</form>
 	</div>
     <hr>
@@ -40,26 +40,3 @@
 		<button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
     </div>
 </body>
-
-<script type="text/javascript">
-  const serialize_form = form => JSON.stringify(
-  Array.from(new FormData(form).entries())
-       .reduce((m, [ key, value ]) => Object.assign(m, { [key]: value }), {})
-);
-
-$('#updateUserForm').on('submit', function(event) {
-  event.preventDefault();
-  const json = serialize_form(this);
-  $.ajax({
-    type: 'PUT',
-    url: 'http://localhost:8000/api/users/' + sessionStorage.getItem("userid"),
-    dataType: 'json',
-    data: json,
-    contentType: 'application/json',
-    success: function(data) {
-      alert(data)
-    }
-  });
-  location.href='viewUsers';
-});
-</script>

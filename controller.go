@@ -64,3 +64,8 @@ func analyseNoteHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/analyseNote.html")
 	t.Execute(w, nil)
 }
+
+func viewFavouritesHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/viewFavourites.html")
+	t.Execute(w, nil)
+}

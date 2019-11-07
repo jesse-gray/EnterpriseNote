@@ -1,6 +1,7 @@
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/javascript/javascript.js"></script>
 </head>
 
 <body>
@@ -23,7 +24,7 @@
 				<input class="form-check-input" type="checkbox" id="savedOption">
 				<label class="form-check-label" for="savedOption">Use saved sharing settings?</label>
 			</div><br><br>
-			<input type="submit" class="btn btn-secondary">
+			<button type="submit" class="btn btn-secondary" onclick="createNote()">Submit</button>
 		</form>
 	</div>
     <hr>
@@ -31,34 +32,3 @@
       	<button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
     </div>
 </body>
-
-<script type="text/javascript">
-  const serialize_form = form => JSON.stringify(
-  Array.from(new FormData(form).entries())
-       .reduce((m, [ key, value ]) => Object.assign(m, { [key]: value }), {})
-);
-
-$('#createForm').on('submit', function(event) {
-  event.preventDefault();
-  const json = serialize_form(this);
-
-  if($('#savedOption').is(':checked')){
-	  x = sessionStorage.getItem("currentlyloggedin") + "/true"
-  } else {
-	  x = sessionStorage.getItem("currentlyloggedin") + "/false"
-  }
-  if($('#notetext').val() != ""){
-    $.ajax({
-      type: 'POST',
-      url: 'http://localhost:8000/api/notes/' + x,
-      dataType: 'json',
-      data: json,
-      contentType: 'application/json',
-      success: function(data) {
-        alert(data)
-		console.log("got here")
-      }
-    });
-  }
-});
-</script>

@@ -26,20 +26,30 @@ func main() {
 	r.HandleFunc("/api/updatePerms", updatePermsHandler)
 	r.HandleFunc("/api/findNote", findNoteHandler)
 	r.HandleFunc("/api/analyseNote", analyseNoteHandler)
+	r.HandleFunc("/api/viewFavourites", viewFavouritesHandler)
+
 	//API routing
 	r.HandleFunc("/api/login", secureLogin).Methods("POST")
-	r.HandleFunc("/api/notes/{id}", getNotes).Methods("GET")
-	r.HandleFunc("/api/note/{id}/{user}", getNote).Methods("GET")
-	r.HandleFunc("/api/notes/{id}/{bool}", createNote).Methods("POST")
+	r.HandleFunc("/api/logout", logout).Methods("POST")
+	r.HandleFunc("/api/notes", getNotes).Methods("GET")
+	r.HandleFunc("/api/note/{id}", getNote).Methods("GET")
+	r.HandleFunc("/api/notes/{bool}", createNote).Methods("POST")
 	r.HandleFunc("/api/notes/{id}", updateNote).Methods("PUT")
 	r.HandleFunc("/api/notes/{id}", deleteNote).Methods("DELETE")
+	r.HandleFunc("/api/notes/{sql}", searchSQL).Methods("GET")
+	r.HandleFunc("/api/notes/{id}/{sql}", analyseNote).Methods("GET")
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
-	r.HandleFunc("/api/users/{id}", deleteUser).Methods("DELETE")
-	r.HandleFunc("/api/users/{id}", updateUser).Methods("PUT")
+	r.HandleFunc("/api/users", deleteUser).Methods("DELETE")
+	r.HandleFunc("/api/users", updateUser).Methods("PUT")
 	r.HandleFunc("/api/permission", updatePermission).Methods("PUT")
-	//JavaScript and CSS handlers
+	r.HandleFunc("/api/favourite", getFavourites).Methods("GET")
+	r.HandleFunc("/api/favourite", createFavourite).Methods("POST")
+	r.HandleFunc("/api/favourite/{id}", deleteFavourite).Methods("DELETE")
+
+	//JavaScript handler
 	r.PathPrefix("/javascript/").Handler(http.StripPrefix("/javascript/", http.FileServer(http.Dir("./javascript"))))
-	r.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir("./css"))))
+
+	//Start server on port 8000
 	log.Fatal(http.ListenAndServe(":8000", r))
 }

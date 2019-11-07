@@ -1,6 +1,7 @@
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/javascript/javascript.js"></script>
 </head>
 
 <body>
@@ -17,9 +18,10 @@
     <div id="buttons" class="container-fluid">
         <button id="createNote" class="btn btn-secondary" onclick="location.href='createNote'" type="button">Create Note</button>
         <button id="viewNotes" class="btn btn-secondary" onclick="location.href='viewNotes'" type="button">View Notes</button>
-        <button id="viewUsers" class="btn btn-secondary" onclick="location.href='viewUsers'" type="button">View Users</button><br><br>
+        <button id="viewUsers" class="btn btn-secondary" onclick="location.href='viewUsers'" type="button">View Users</button>
+        <button id="viewFavourites" class="btn btn-secondary" onclick="location.href='viewFavourites'" type="button">View Favourites</button><br><br>
         <button id="findNote" class="btn btn-secondary" onclick="location.href='findNote'" type="button">Find a Note</button>
         <button id="analyseNote" class="btn btn-secondary" onclick="location.href='analyseNote'" type="button">Analyse a Note</button><br><br>
-        <button id="logout" class="btn btn-secondary" onclick="sessionStorage.removeItem('currentlyloggedin'); location.replace('/api/')">Logout</button>
+        <button id="logout" class="btn btn-secondary" onclick="logout()">Logout</button>
     </div>
 </body>

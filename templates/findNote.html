@@ -1,6 +1,7 @@
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/javascript/javascript.js"></script>
 </head>
 
 <body>
@@ -16,10 +17,15 @@
 				<label class="col-sm-6 col-form-label">Enter Search Term: </label>
                 <input type="text" class="form-control" id="searchterm" name="searchterm">
 			</div>
-			<button type="submit" class="btn btn-secondary">Submit</button>
+			<button type="submit" class="btn btn-secondary" onclick="findNote()">Submit</button>
 		</form>
         <hr>
-        <div id="notesOutput" class="container-fluid"></div>
+        <div id="yourNotes" class="container-fluid">
+        </div>
+        <hr>
+        <div id="sharedNotes" class="container-fluid">
+        </div>
+        <hr>
         <div class="container-fluid">
 		    <button id="homeBtn" class="btn btn-secondary" onclick='location.href="home"'>Home</button>
         </div>
