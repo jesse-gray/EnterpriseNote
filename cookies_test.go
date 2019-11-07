@@ -37,12 +37,12 @@ func TestAttatchCookietoUser(t *testing.T) {
 	if assert.NotNil(db) {
 		// test attatchCookietoUser
 		assert.True(attatchCookietoUser("a", testUser), "Cookie has been added")
-		
+
 		// test createcookie
 		testcookie := createCookie()
 		assert.NotNil(testcookie)
-			
+
 		// test getCookie
-		
+
 	}
 }

@@ -12,7 +12,7 @@ import (
 //	assert.NotNil(testcookie)
 //}
 
-func TestAttatchCookietoUser(t *testing.T) {
+func TestSecurity(t *testing.T) {
 	assert := assert.New(t)
 
 	var testUser User
@@ -37,7 +37,7 @@ func TestAttatchCookietoUser(t *testing.T) {
 	if assert.NotNil(db) {
 		// test validate user
 
-		assert.Equal(validateUser(1), true, "User Exists")
+		assert.Equal(validateUser("1"), true, "User Exists")
 
 		// test check password
 
